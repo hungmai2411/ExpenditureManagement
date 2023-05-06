@@ -40,54 +40,56 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection("data")
-              .doc(FirebaseAuth.instance.currentUser!.uid)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<String> list = [];
+        child: body(),
+        // child: StreamBuilder(
+        //   stream: FirebaseFirestore.instance
+        //       .collection("data")
+        //       .doc(FirebaseAuth.instance.currentUser!.uid)
+        //       .snapshots(),
+        //   builder: (context, snapshot) {
+        //     if (snapshot.hasData) {
+        //       List<String> list = [];
 
-              if (snapshot.requireData.data() != null) {
-                var data = snapshot.requireData.data() as Map<String, dynamic>;
+        //       if (snapshot.requireData.data() != null) {
+        //         var data = snapshot.requireData.data() as Map<String, dynamic>;
 
-                if (data[DateFormat("MM_yyyy")
-                        .format(months[18 - _monthController.index])] !=
-                    null) {
-                  list = (data[DateFormat("MM_yyyy")
-                              .format(months[18 - _monthController.index])]
-                          as List<dynamic>)
-                      .map((e) => e.toString())
-                      .toList();
-                }
-              }
+        //         if (data[DateFormat("MM_yyyy")
+        //                 .format(months[18 - _monthController.index])] !=
+        //             null) {
+        //           list = (data[DateFormat("MM_yyyy")
+        //                       .format(months[18 - _monthController.index])]
+        //                   as List<dynamic>)
+        //               .map((e) => e.toString())
+        //               .toList();
+        //         }
+        //       }
 
-              return StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("spending")
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var spendingList = snapshot.data!.docs
-                        .where((element) => list.contains(element.id))
-                        .map((e) => Spending.fromFirebase(e))
-                        .toList();
+        //       return StreamBuilder(
+        //         stream: FirebaseFirestore.instance
+        //             .collection("spending")
+        //             .snapshots(),
+        //         builder: (context, snapshot) {
+        //           if (snapshot.hasData) {
+        //             var spendingList = snapshot.data!.docs
+        //                 .where((element) => list.contains(element.id))
+        //                 .map((e) => Spending.fromFirebase(e))
+        //                 .toList();
 
-                    return body(spendingList: spendingList);
-                  }
-                  return loading();
-                },
-              );
-            }
-            return loading();
-          },
-        ),
+        //             return body(spendingList: spendingList);
+        //           }
+        //           return loading();
+        //         },
+        //       );
+        //     }
+        //     return loading();
+        //   },
+        // ),
       ),
     );
   }
 
   Widget body({List<Spending>? spendingList}) {
+    spendingList = [];
     return Column(
       children: [
         const SizedBox(height: 10),

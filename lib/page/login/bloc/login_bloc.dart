@@ -88,8 +88,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<bool> signInWithEmailAndPassword(
       {required String emailAddress, required String password}) async {
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: emailAddress, password: password);
+      // await FirebaseAuth.instance
+      //     .signInWithEmailAndPassword(email: emailAddress, password: password);
       return true;
     } on FirebaseAuthException catch (e) {
       _status = e.code;

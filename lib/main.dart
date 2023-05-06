@@ -1,5 +1,4 @@
 import 'package:expenditure_management/constants/app_colors.dart';
-import 'package:expenditure_management/firebase_options.dart';
 import 'package:expenditure_management/page/forgot/forgot_page.dart';
 import 'package:expenditure_management/page/forgot/success_page.dart';
 import 'package:expenditure_management/page/login/login_page.dart';
@@ -23,9 +22,6 @@ bool isFirstStart = true;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   final prefs = await SharedPreferences.getInstance();
   language = prefs.getInt('language');
   isDark = prefs.getBool("isDark") ?? false;
@@ -89,13 +85,7 @@ class MyApp extends StatelessWidget {
                       ),
                       primaryColor: const Color.fromRGBO(242, 243, 247, 1),
                     ),
-              initialRoute: FirebaseAuth.instance.currentUser == null
-                  ? (isFirstStart ? "/" : "/login")
-                  : loginMethod
-                      ? (FirebaseAuth.instance.currentUser!.emailVerified
-                          ? '/main'
-                          : '/verify')
-                      : '/main',
+              initialRoute: "/main",
               routes: {
                 '/': (context) => const OnBoardingPage(),
                 '/login': (context) => const LoginPage(),

@@ -50,8 +50,7 @@ class _LoginFormState extends State<LoginForm> {
           Fluttertoast.showToast(
               msg: AppLocalizations.of(context).translate("login_success"));
           SchedulerBinding.instance.addPostFrameCallback((_) {
-            if (state.social == Social.email &&
-                !FirebaseAuth.instance.currentUser!.emailVerified) {
+            if (state.social == Social.email) {
               Navigator.pushReplacementNamed(context, "/verify");
             } else {
               if (state.social == Social.newUser) {

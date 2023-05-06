@@ -28,106 +28,107 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection("data")
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var data = {};
+        child: loadingData(),
+        // child: StreamBuilder<DocumentSnapshot>(
+        //     stream: FirebaseFirestore.instance
+        //         .collection("data")
+        //         .doc(FirebaseAuth.instance.currentUser!.uid)
+        //         .snapshots(),
+        //     builder: (context, snapshot) {
+        //       if (snapshot.hasData) {
+        //         var data = {};
 
-                if (snapshot.requireData.data() != null) {
-                  data = snapshot.requireData.data() as Map<String, dynamic>;
-                }
-                List<String> list = [];
+        //         if (snapshot.requireData.data() != null) {
+        //           data = snapshot.requireData.data() as Map<String, dynamic>;
+        //         }
+        //         List<String> list = [];
 
-                return StatefulBuilder(builder: (context, setState) {
-                  if (data[DateFormat("MM_yyyy").format(_focusedDay)] != null) {
-                    list = (data[DateFormat("MM_yyyy").format(_focusedDay)]
-                            as List<dynamic>)
-                        .map((e) => e.toString())
-                        .toList();
-                  }
+        //         return StatefulBuilder(builder: (context, setState) {
+        //           if (data[DateFormat("MM_yyyy").format(_focusedDay)] != null) {
+        //             list = (data[DateFormat("MM_yyyy").format(_focusedDay)]
+        //                     as List<dynamic>)
+        //                 .map((e) => e.toString())
+        //                 .toList();
+        //           }
 
-                  return FutureBuilder(
-                      future: SpendingFirebase.getSpendingList(list),
-                      builder: (context, futureSnapshot) {
-                        if (futureSnapshot.hasData) {
-                          var dataSpending = futureSnapshot.requireData;
+        //           return FutureBuilder(
+        //               future: SpendingFirebase.getSpendingList(list),
+        //               builder: (context, futureSnapshot) {
+        //                 if (futureSnapshot.hasData) {
+        //                   var dataSpending = futureSnapshot.requireData;
 
-                          if (isSameMonth(_focusedDay, _selectedDay)) {
-                            List<Spending> spendingList = dataSpending
-                                .where((element) =>
-                                    isSameDay(element.dateTime, _selectedDay))
-                                .toList();
-                            _currentSpendingList = spendingList;
-                          }
+        //                   if (isSameMonth(_focusedDay, _selectedDay)) {
+        //                     List<Spending> spendingList = dataSpending
+        //                         .where((element) =>
+        //                             isSameDay(element.dateTime, _selectedDay))
+        //                         .toList();
+        //                     _currentSpendingList = spendingList;
+        //                   }
 
-                          return Column(
-                            children: [
-                              CustomTableCalendar(
-                                  focusedDay: _focusedDay,
-                                  selectedDay: _selectedDay,
-                                  dataSpending: dataSpending,
-                                  onPageChanged: (focusedDay) =>
-                                      setState(() => _focusedDay = focusedDay),
-                                  onDaySelected: (selectedDay, focusedDay) {
-                                    setState(() {
-                                      _focusedDay = focusedDay;
-                                      _selectedDay = selectedDay;
-                                    });
-                                  }),
-                              const SizedBox(height: 5),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      if (_currentSpendingList!.isNotEmpty)
-                                        TotalSpending(
-                                            list: _currentSpendingList),
-                                      BuildSpending(
-                                        spendingList: _currentSpendingList,
-                                        date: _selectedDay,
-                                        change: (spending) async {
-                                          try {
-                                            spending.image = await FirebaseStorage
-                                                .instance
-                                                .ref()
-                                                .child(
-                                                    "spending/${spending.id}.png")
-                                                .getDownloadURL();
-                                          } catch (_) {}
+        //                   return Column(
+        //                     children: [
+        //                       CustomTableCalendar(
+        //                           focusedDay: _focusedDay,
+        //                           selectedDay: _selectedDay,
+        //                           dataSpending: dataSpending,
+        //                           onPageChanged: (focusedDay) =>
+        //                               setState(() => _focusedDay = focusedDay),
+        //                           onDaySelected: (selectedDay, focusedDay) {
+        //                             setState(() {
+        //                               _focusedDay = focusedDay;
+        //                               _selectedDay = selectedDay;
+        //                             });
+        //                           }),
+        //                       const SizedBox(height: 5),
+        //                       Expanded(
+        //                         child: SingleChildScrollView(
+        //                           child: Column(
+        //                             children: [
+        //                               if (_currentSpendingList!.isNotEmpty)
+        //                                 TotalSpending(
+        //                                     list: _currentSpendingList),
+        //                               BuildSpending(
+        //                                 spendingList: _currentSpendingList,
+        //                                 date: _selectedDay,
+        //                                 change: (spending) async {
+        //                                   try {
+        //                                     spending.image = await FirebaseStorage
+        //                                         .instance
+        //                                         .ref()
+        //                                         .child(
+        //                                             "spending/${spending.id}.png")
+        //                                         .getDownloadURL();
+        //                                   } catch (_) {}
 
-                                          setState(() {
-                                            if (isSameDay(spending.dateTime,
-                                                _selectedDay)) {
-                                              _currentSpendingList![findIndex(
-                                                  _currentSpendingList!,
-                                                  spending.id!)] = spending;
-                                            } else {
-                                              _currentSpendingList!.removeWhere(
-                                                  (element) =>
-                                                      element.id!.compareTo(
-                                                          spending.id!) ==
-                                                      0);
-                                            }
-                                          });
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-                        return loadingData();
-                      });
-                });
-              }
-              return loadingData();
-            }),
+        //                                   setState(() {
+        //                                     if (isSameDay(spending.dateTime,
+        //                                         _selectedDay)) {
+        //                                       _currentSpendingList![findIndex(
+        //                                           _currentSpendingList!,
+        //                                           spending.id!)] = spending;
+        //                                     } else {
+        //                                       _currentSpendingList!.removeWhere(
+        //                                           (element) =>
+        //                                               element.id!.compareTo(
+        //                                                   spending.id!) ==
+        //                                               0);
+        //                                     }
+        //                                   });
+        //                                 },
+        //                               )
+        //                             ],
+        //                           ),
+        //                         ),
+        //                       ),
+        //                     ],
+        //                   );
+        //                 }
+        //                 return loadingData();
+        //               });
+        //         });
+        //       }
+        //       return loadingData();
+        //     }),
       ),
     );
   }

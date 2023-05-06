@@ -15,7 +15,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:screenshot/screenshot.dart';
+//import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -37,7 +37,7 @@ class ViewSpendingPage extends StatefulWidget {
 class _ViewSpendingPageState extends State<ViewSpendingPage> {
   List<Color> colors = [];
   final numberFormat = NumberFormat.currency(locale: "vi_VI");
-  ScreenshotController screenshotController = ScreenshotController();
+  //ScreenshotController screenshotController = ScreenshotController();
   late Spending spending;
 
   @override
@@ -64,18 +64,18 @@ class _ViewSpendingPageState extends State<ViewSpendingPage> {
         actions: [
           IconButton(
             onPressed: () async {
-              await screenshotController
-                  .capture(delay: const Duration(milliseconds: 10))
-                  .then((image) async {
-                if (image != null) {
-                  final directory = await getApplicationDocumentsDirectory();
-                  final imagePath =
-                      await File('${directory.path}/image.png').create();
-                  await imagePath.writeAsBytes(image);
+              // await screenshotController
+              //     .capture(delay: const Duration(milliseconds: 10))
+              //     .then((image) async {
+              //   if (image != null) {
+              //     final directory = await getApplicationDocumentsDirectory();
+              //     final imagePath =
+              //         await File('${directory.path}/image.png').create();
+              //     await imagePath.writeAsBytes(image);
 
-                  await Share.shareFiles([imagePath.path]);
-                }
-              });
+              //     await Share.shareFiles([imagePath.path]);
+              //   }
+              // });
             },
             icon: const Icon(
               Icons.share,
@@ -121,157 +121,157 @@ class _ViewSpendingPageState extends State<ViewSpendingPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Screenshot(
-          controller: screenshotController,
-          child: Card(
-            margin: const EdgeInsets.all(10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Image.asset(
-                        listType[spending.type]["image"]!,
-                        height: 50,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        spending.type == 41
-                            ? spending.typeName!
-                            : AppLocalizations.of(context)
-                                .translate(listType[spending.type]["title"]!),
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      const SizedBox(width: 60),
-                      Text(
-                        numberFormat.format(spending.money.abs()),
-                        style: const TextStyle(fontSize: 25, color: Colors.red),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                  line(),
-                  const SizedBox(height: 5),
-                  Row(
-                    children: [
-                      const SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: Icon(
-                          Icons.calendar_month_rounded,
-                          size: 30,
-                          color: Color.fromRGBO(244, 131, 27, 1),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        DateFormat("dd/MM/yyyy - HH:mm")
-                            .format(spending.dateTime),
-                        style: const TextStyle(fontSize: 16),
-                      )
-                    ],
-                  ),
-                  if (spending.note != null && spending.note!.isNotEmpty)
-                    Row(
-                      children: [
-                        const SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Icon(
-                            Icons.edit_note_rounded,
-                            size: 30,
-                            color: Color.fromRGBO(221, 96, 0, 1),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          spending.note!,
-                          maxLines: 10,
-                          style: const TextStyle(fontSize: 16),
-                        )
-                      ],
-                    ),
-                  if (spending.location != null &&
-                      spending.location!.isNotEmpty)
-                    Row(
-                      children: [
-                        const SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Icon(
-                            Icons.location_on_outlined,
-                            size: 30,
-                            color: Color.fromRGBO(99, 195, 40, 1),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          spending.location!,
-                          style: const TextStyle(fontSize: 16),
-                        )
-                      ],
-                    ),
-                  if (spending.friends != null && spending.friends!.isNotEmpty)
-                    ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        const SizedBox(height: 5),
-                        addFriend(),
-                        const SizedBox(height: 5),
-                      ],
-                    ),
-                  if (spending.friends != null && spending.friends!.isNotEmpty)
-                    const SizedBox(height: 10),
-                  if (spending.image != null)
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ViewImage(url: spending.image!),
-                          ),
-                        );
-                      },
-                      child: CachedNetworkImage(
-                        imageUrl: spending.image!,
-                        width: double.infinity,
-                        fit: BoxFit.fitWidth,
-                        placeholder: (context, url) => Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
-                          child: Container(
-                            height: 150,
-                            width: double.infinity,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      ),
-                    ),
-                  //Image.network(spending.image!)
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+      // body: SingleChildScrollView(
+      //   child: Screenshot(
+      //     controller: screenshotController,
+      //     child: Card(
+      //       margin: const EdgeInsets.all(10),
+      //       shape: RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.circular(10),
+      //       ),
+      //       child: Padding(
+      //         padding: const EdgeInsets.all(10),
+      //         child: Column(
+      //           mainAxisSize: MainAxisSize.min,
+      //           children: [
+      //             Row(
+      //               children: [
+      //                 Image.asset(
+      //                   listType[spending.type]["image"]!,
+      //                   height: 50,
+      //                 ),
+      //                 const SizedBox(width: 10),
+      //                 Text(
+      //                   spending.type == 41
+      //                       ? spending.typeName!
+      //                       : AppLocalizations.of(context)
+      //                           .translate(listType[spending.type]["title"]!),
+      //                   style: const TextStyle(
+      //                     fontSize: 20,
+      //                     fontWeight: FontWeight.bold,
+      //                   ),
+      //                 )
+      //               ],
+      //             ),
+      //             const SizedBox(height: 10),
+      //             Row(
+      //               children: [
+      //                 const SizedBox(width: 60),
+      //                 Text(
+      //                   numberFormat.format(spending.money.abs()),
+      //                   style: const TextStyle(fontSize: 25, color: Colors.red),
+      //                 ),
+      //               ],
+      //             ),
+      //             const SizedBox(height: 5),
+      //             line(),
+      //             const SizedBox(height: 5),
+      //             Row(
+      //               children: [
+      //                 const SizedBox(
+      //                   width: 50,
+      //                   height: 50,
+      //                   child: Icon(
+      //                     Icons.calendar_month_rounded,
+      //                     size: 30,
+      //                     color: Color.fromRGBO(244, 131, 27, 1),
+      //                   ),
+      //                 ),
+      //                 const SizedBox(width: 10),
+      //                 Text(
+      //                   DateFormat("dd/MM/yyyy - HH:mm")
+      //                       .format(spending.dateTime),
+      //                   style: const TextStyle(fontSize: 16),
+      //                 )
+      //               ],
+      //             ),
+      //             if (spending.note != null && spending.note!.isNotEmpty)
+      //               Row(
+      //                 children: [
+      //                   const SizedBox(
+      //                     width: 50,
+      //                     height: 50,
+      //                     child: Icon(
+      //                       Icons.edit_note_rounded,
+      //                       size: 30,
+      //                       color: Color.fromRGBO(221, 96, 0, 1),
+      //                     ),
+      //                   ),
+      //                   const SizedBox(width: 10),
+      //                   Text(
+      //                     spending.note!,
+      //                     maxLines: 10,
+      //                     style: const TextStyle(fontSize: 16),
+      //                   )
+      //                 ],
+      //               ),
+      //             if (spending.location != null &&
+      //                 spending.location!.isNotEmpty)
+      //               Row(
+      //                 children: [
+      //                   const SizedBox(
+      //                     width: 50,
+      //                     height: 50,
+      //                     child: Icon(
+      //                       Icons.location_on_outlined,
+      //                       size: 30,
+      //                       color: Color.fromRGBO(99, 195, 40, 1),
+      //                     ),
+      //                   ),
+      //                   const SizedBox(width: 10),
+      //                   Text(
+      //                     spending.location!,
+      //                     style: const TextStyle(fontSize: 16),
+      //                   )
+      //                 ],
+      //               ),
+      //             if (spending.friends != null && spending.friends!.isNotEmpty)
+      //               ListView(
+      //                 shrinkWrap: true,
+      //                 physics: const NeverScrollableScrollPhysics(),
+      //                 children: [
+      //                   const SizedBox(height: 5),
+      //                   addFriend(),
+      //                   const SizedBox(height: 5),
+      //                 ],
+      //               ),
+      //             if (spending.friends != null && spending.friends!.isNotEmpty)
+      //               const SizedBox(height: 10),
+      //             if (spending.image != null)
+      //               InkWell(
+      //                 onTap: () {
+      //                   Navigator.push(
+      //                     context,
+      //                     MaterialPageRoute(
+      //                       builder: (context) =>
+      //                           ViewImage(url: spending.image!),
+      //                     ),
+      //                   );
+      //                 },
+      //                 child: CachedNetworkImage(
+      //                   imageUrl: spending.image!,
+      //                   width: double.infinity,
+      //                   fit: BoxFit.fitWidth,
+      //                   placeholder: (context, url) => Shimmer.fromColors(
+      //                     baseColor: Colors.grey[300]!,
+      //                     highlightColor: Colors.grey[100]!,
+      //                     child: Container(
+      //                       height: 150,
+      //                       width: double.infinity,
+      //                       color: Colors.grey,
+      //                     ),
+      //                   ),
+      //                   errorWidget: (context, url, error) =>
+      //                       const Icon(Icons.error),
+      //                 ),
+      //               ),
+      //             //Image.network(spending.image!)
+      //           ],
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
     );
   }
 

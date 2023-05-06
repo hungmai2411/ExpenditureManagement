@@ -61,20 +61,20 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         child: Column(
           children: [
-            StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection("info")
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  myuser.User user =
-                      myuser.User.fromFirebase(snapshot.requireData);
-                  return InfoWidget(user: user);
-                }
-                return const InfoWidget();
-              },
-            ),
+            // StreamBuilder(
+            //   stream: FirebaseFirestore.instance
+            //       .collection("info")
+            //       .doc(FirebaseAuth.instance.currentUser!.uid)
+            //       .snapshots(),
+            //   builder: (context, snapshot) {
+            //     if (snapshot.hasData) {
+            //       myuser.User user =
+            //           myuser.User.fromFirebase(snapshot.requireData);
+            //       return InfoWidget(user: user);
+            //     }
+            //     return const InfoWidget();
+            //   },
+            // ),
             const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(

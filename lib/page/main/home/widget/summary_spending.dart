@@ -40,38 +40,39 @@ class _SummarySpendingState extends State<SummarySpending> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.spendingList != null
-        ? StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection("wallet")
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.requireData.data() != null) {
-                  var data = snapshot.requireData.data();
-                  var wallet =
-                      data![DateFormat("MM_yyyy").format(DateTime.now())];
-                  int sum = 0;
-                  if (widget.spendingList!.isNotEmpty) {
-                    sum = widget.spendingList!
-                        .map((e) => e.money)
-                        .reduce((value, element) => value + element);
-                  }
-                  if (wallet != null) {
-                    return body(wallet, sum);
-                  } else {
-                    initWallet(data: data);
-                    return loadingSummary();
-                  }
-                } else {
-                  initWallet();
-                  return loadingSummary();
-                }
-              }
-              return loadingSummary();
-            })
-        : loadingSummary();
+    // return widget.spendingList != null
+    //     ? StreamBuilder(
+    //         stream: FirebaseFirestore.instance
+    //             .collection("wallet")
+    //             .doc(FirebaseAuth.instance.currentUser!.uid)
+    //             .snapshots(),
+    //         builder: (context, snapshot) {
+    //           if (snapshot.hasData) {
+    //             if (snapshot.requireData.data() != null) {
+    //               var data = snapshot.requireData.data();
+    //               var wallet =
+    //                   data![DateFormat("MM_yyyy").format(DateTime.now())];
+    //               int sum = 0;
+    //               if (widget.spendingList!.isNotEmpty) {
+    //                 sum = widget.spendingList!
+    //                     .map((e) => e.money)
+    //                     .reduce((value, element) => value + element);
+    //               }
+    //               if (wallet != null) {
+    //                 return body(wallet, sum);
+    //               } else {
+    //                 initWallet(data: data);
+    //                 return loadingSummary();
+    //               }
+    //             } else {
+    //               initWallet();
+    //               return loadingSummary();
+    //             }
+    //           }
+    //           return loadingSummary();
+    //         })
+    //     : loadingSummary();
+    return widget.spendingList != null ? Container() : loadingSummary();
   }
 
   Widget body(var wallet, var sum) {

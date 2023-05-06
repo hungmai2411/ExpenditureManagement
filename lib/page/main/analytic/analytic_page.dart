@@ -161,74 +161,75 @@ class _AnalyticPageState extends State<AnalyticPage>
   }
 
   Widget body() {
-    return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("data")
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            Map<String, dynamic> data = {};
-            if (snapshot.requireData.data() != null) {
-              data = snapshot.requireData.data() as Map<String, dynamic>;
-            }
-            List<String> list = getDataSpending(
-              data: data,
-              index: _tabController.index,
-              date: now,
-            );
+    // return StreamBuilder<DocumentSnapshot>(
+    //     stream: FirebaseFirestore.instance
+    //         .collection("data")
+    //         .doc(FirebaseAuth.instance.currentUser!.uid)
+    //         .snapshots(),
+    //     builder: (context, snapshot) {
+    //       if (snapshot.hasData) {
+    //         Map<String, dynamic> data = {};
+    //         if (snapshot.requireData.data() != null) {
+    //           data = snapshot.requireData.data() as Map<String, dynamic>;
+    //         }
+    //         List<String> list = getDataSpending(
+    //           data: data,
+    //           index: _tabController.index,
+    //           date: now,
+    //         );
 
-            return StreamBuilder(
-              stream:
-                  FirebaseFirestore.instance.collection("spending").snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  var dataSpending = snapshot.data!.docs
-                      .where((element) => list.contains(element.id))
-                      .map((e) => Spending.fromFirebase(e))
-                      .toList();
+    //         return StreamBuilder(
+    //           stream:
+    //               FirebaseFirestore.instance.collection("spending").snapshots(),
+    //           builder: (context, snapshot) {
+    //             if (snapshot.hasData) {
+    //               var dataSpending = snapshot.data!.docs
+    //                   .where((element) => list.contains(element.id))
+    //                   .map((e) => Spending.fromFirebase(e))
+    //                   .toList();
 
-                  List<Spending> spendingList = dataSpending
-                      .where((element) => checkDate(element.dateTime))
-                      .toList();
+    //               List<Spending> spendingList = dataSpending
+    //                   .where((element) => checkDate(element.dateTime))
+    //                   .toList();
 
-                  List<Spending> classifySpending =
-                      spendingList.where((element) {
-                    if (_typeController.index == 0 && element.money > 0) {
-                      return false;
-                    }
-                    if (_typeController.index == 1 && element.money < 0) {
-                      return false;
-                    }
-                    return true;
-                  }).toList();
+    //               List<Spending> classifySpending =
+    //                   spendingList.where((element) {
+    //                 if (_typeController.index == 0 && element.money > 0) {
+    //                   return false;
+    //                 }
+    //                 if (_typeController.index == 1 && element.money < 0) {
+    //                   return false;
+    //                 }
+    //                 return true;
+    //               }).toList();
 
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          showChart(classifySpending),
-                          if (spendingList.isNotEmpty)
-                            TotalReport(list: spendingList),
-                          if (spendingList.isNotEmpty)
-                            (chart
-                                ? showListSpendingPie(list: classifySpending)
-                                : ShowListSpendingColumn(
-                                    spendingList: classifySpending,
-                                    index: _tabController.index))
-                        ],
-                      ),
-                    ),
-                  );
-                }
-                return loading();
-              },
-            );
-          }
+    //               return SingleChildScrollView(
+    //                 child: Padding(
+    //                   padding: const EdgeInsets.all(10),
+    //                   child: Column(
+    //                     children: [
+    //                       showChart(classifySpending),
+    //                       if (spendingList.isNotEmpty)
+    //                         TotalReport(list: spendingList),
+    //                       if (spendingList.isNotEmpty)
+    //                         (chart
+    //                             ? showListSpendingPie(list: classifySpending)
+    //                             : ShowListSpendingColumn(
+    //                                 spendingList: classifySpending,
+    //                                 index: _tabController.index))
+    //                     ],
+    //                   ),
+    //                 ),
+    //               );
+    //             }
+    //             return loading();
+    //           },
+    //         );
+    //       }
 
-          return loading();
-        });
+    //       return loading();
+    //     });
+    return loading();
   }
 
   Widget showChart(List<Spending> classifySpending) {
