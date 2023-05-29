@@ -213,9 +213,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           onPressed: () async {
-                            await FirebaseAuth.instance.signOut();
-                            await GoogleSignIn().signOut();
-                            await FacebookAuth.instance.logOut();
+                            // await FirebaseAuth.instance.signOut();
+                            // await GoogleSignIn().signOut();
+                            // await FacebookAuth.instance.logOut();
                             if (!mounted) return;
                             Navigator.pushNamedAndRemoveUntil(
                                 context, '/login', (route) => false);
