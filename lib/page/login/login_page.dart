@@ -1,4 +1,5 @@
 import 'package:expenditure_management/constants/function/on_will_pop.dart';
+import 'package:expenditure_management/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:expenditure_management/page/login/bloc/login_bloc.dart';
@@ -25,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: SafeArea(
           child: BlocProvider(
-            create: (context) => LoginBloc(),
+            create: (context) => LoginBloc(AuthRepository()),
             child: const LoginForm(),
           ),
         ),

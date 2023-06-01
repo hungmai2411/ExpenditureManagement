@@ -9,8 +9,6 @@ import 'package:expenditure_management/page/signup/verify/verify_page.dart';
 import 'package:expenditure_management/setting/bloc/setting_cubit.dart';
 import 'package:expenditure_management/setting/bloc/setting_state.dart';
 import 'package:expenditure_management/setting/localization/app_localizations_setup.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 bool loginMethod = false;
 int? language;
 bool isDark = false;
+int? id;
 bool isFirstStart = true;
 
 void main() async {
@@ -27,6 +26,7 @@ void main() async {
   isDark = prefs.getBool("isDark") ?? false;
   isFirstStart = prefs.getBool("firstStart") ?? true;
   loginMethod = prefs.getBool("login") ?? false;
+  id = prefs.getInt("userID") ?? -1;
   runApp(const MyApp());
 }
 
@@ -85,7 +85,8 @@ class MyApp extends StatelessWidget {
                       ),
                       primaryColor: const Color.fromRGBO(242, 243, 247, 1),
                     ),
-              initialRoute: "/main",
+              initialRoute:
+                  id == -1 ? (isFirstStart ? "/" : "/login") : '/main',
               routes: {
                 '/': (context) => const OnBoardingPage(),
                 '/login': (context) => const LoginPage(),

@@ -10,10 +10,8 @@ import 'package:expenditure_management/page/signup/bloc/signup_bloc.dart';
 import 'package:expenditure_management/page/signup/bloc/signup_event.dart';
 import 'package:expenditure_management/page/signup/bloc/singup_state.dart';
 import 'package:expenditure_management/page/signup/gender_widget.dart';
-import 'package:expenditure_management/page/signup/verify/verify_page.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -27,10 +25,11 @@ class SignupForm extends StatefulWidget {
 
 class _SignupFormState extends State<SignupForm> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _userController = TextEditingController();
+  final TextEditingController _mailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
   DateTime birthday = DateTime.now();
   bool hide = true;
@@ -40,7 +39,7 @@ class _SignupFormState extends State<SignupForm> {
   @override
   void dispose() {
     _nameController.dispose();
-    _userController.dispose();
+    _mailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -55,13 +54,6 @@ class _SignupFormState extends State<SignupForm> {
           Fluttertoast.showToast(
               msg: AppLocalizations.of(context)
                   .translate("create-account-success"));
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(const Duration(seconds: 3), () {
-              Navigator.of(context).pushReplacement(
-                createRoute(screen: const VerifyPage()),
-              );
-            });
-          });
         }
 
         if (state is SignupErrorState && check) {
@@ -100,7 +92,7 @@ class _SignupFormState extends State<SignupForm> {
                   InputText(
                     hint: "Email",
                     validator: 0,
-                    controller: _userController,
+                    controller: _mailController,
                     inputType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 20),
@@ -140,7 +132,7 @@ class _SignupFormState extends State<SignupForm> {
                       );
                       if (picked != null && picked != birthday) {
                         check = false;
-                        setState(() => birthday = picked);
+                        setState(() => birthday = picked.toUtc());
                       }
                     },
                     child: Container(
@@ -195,18 +187,16 @@ class _SignupFormState extends State<SignupForm> {
                     action: () {
                       if (_formKey.currentState!.validate()) {
                         loadingAnimation(context);
+                        User user = User(
+                          email: _mailController.text.trim(),
+                          password: _passwordController.text.trim(),
+                          name: _nameController.text.trim(),
+                          gender: gender,
+                          birthday: birthday.toIso8601String(),
+                        );
                         BlocProvider.of<SignupBloc>(context).add(
                           SignupEmailPasswordEvent(
-                            email: _userController.text.trim(),
-                            password: _passwordController.text,
-                            user: User(
-                              name: _nameController.text.trim(),
-                              money: 0,
-                              birthday:
-                                  DateFormat("dd/MM/yyyy").format(birthday),
-                              gender: gender,
-                              avatar: "",
-                            ),
+                            user: user,
                           ),
                         );
                         return;

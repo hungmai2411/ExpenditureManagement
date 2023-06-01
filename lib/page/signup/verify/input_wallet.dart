@@ -3,9 +3,11 @@ import 'package:expenditure_management/constants/app_styles.dart';
 import 'package:expenditure_management/constants/function/on_will_pop.dart';
 import 'package:expenditure_management/controls/spending_firebase.dart';
 import 'package:expenditure_management/page/login/widget/custom_button.dart';
+import 'package:expenditure_management/repository/wallet_repository.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InputWalletPage extends StatefulWidget {
   const InputWalletPage({Key? key}) : super(key: key);
@@ -76,9 +78,17 @@ class _InputWalletPageState extends State<InputWalletPage> {
                 const SizedBox(height: 30),
                 customButton(
                   action: () async {
-                    await SpendingFirebase.addWalletMoney(int.parse(
-                        _moneyController.text
-                            .replaceAll(RegExp(r'[^0-9]'), '')));
+                    final prefs = await SharedPreferences.getInstance();
+                    int? id = prefs.getInt('userID');
+                    await WalletRepository().createFirstWallet(
+                      id!,
+                      'VND',
+                      int.parse(_moneyController.text
+                          .replaceAll(RegExp(r'[^0-9]'), '')),
+                    );
+                    SharedPreferences.getInstance().then((value) {
+                      value.setBool("newUser", false);
+                    });
                     if (!mounted) return;
                     Navigator.pushReplacementNamed(context, '/main');
                   },

@@ -1,4 +1,5 @@
 import 'package:expenditure_management/constants/function/on_will_pop.dart';
+import 'package:expenditure_management/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:expenditure_management/page/signup/bloc/signup_bloc.dart';
@@ -24,7 +25,7 @@ class _SignupPageState extends State<SignupPage> {
         ),
         child: SafeArea(
           child: BlocProvider(
-            create: (context) => SignupBloc(),
+            create: (context) => SignupBloc(AuthRepository()),
             child: const SignupForm(),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expenditure_management/repository/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:expenditure_management/page/signup/bloc/signup_event.dart';
@@ -8,18 +9,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupBloc extends Bloc<SignupEvent, SignupState> {
   String _status = "";
+  final AuthRepository _authRepository;
 
-  SignupBloc() : super(InitState()) {
+  SignupBloc(this._authRepository) : super(InitState()) {
     on<SignupEmailPasswordEvent>((event, emit) async {
-      bool check =
-          await createAccount(email: event.email, password: event.password);
-      if (check) {
-        SharedPreferences.getInstance().then((value) {
-          value.setBool("login", true);
-        });
-        await initInfoUser(event.user);
-        emit(SignupSuccessState());
-      } else {
+      try {
+        String? response = await _authRepository.register(event.user);
+        if (response != null && response == 'Register success') {
+          SharedPreferences.getInstance().then((value) {
+            value.setBool("login", true);
+          });
+          emit(SignupSuccessState());
+        }
+      } catch (e) {
         emit(SignupErrorState(status: _status));
       }
     });

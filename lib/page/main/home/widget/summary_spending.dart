@@ -26,7 +26,12 @@ class _SummarySpendingState extends State<SummarySpending> {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((value) {
-      myuser.User user = myuser.User.fromFirebase(value);
+      myuser.User user = myuser.User(
+        email: 'maiphamquochung@gmail.com',
+        password: 'Teoem2411',
+        name: 'Tommy Hung',
+        birthday: '24/11/2002',
+      );
       var walletData = data ?? {};
       walletData
           .addAll({DateFormat("MM_yyyy").format(DateTime.now()): user.money});

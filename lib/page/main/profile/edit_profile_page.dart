@@ -49,7 +49,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
             .get(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            myuser.User user = myuser.User.fromFirebase(snapshot.requireData);
+            //myuser.User user = myuser.User.fromFirebase(snapshot.requireData);
+            myuser.User user = myuser.User(
+              email: 'maiphamquochung@gmail.com',
+              password: 'Teoem2411',
+              name: 'Tommy Hung',
+              birthday: '24/11/2002',
+            );
             final nameController = TextEditingController(text: user.name);
             final moneyController = TextEditingController(
               text: NumberFormat.currency(locale: "vi_VI").format(user.money),

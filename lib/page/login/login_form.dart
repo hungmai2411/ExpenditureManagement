@@ -2,10 +2,9 @@ import 'package:expenditure_management/constants/function/loading_animation.dart
 import 'package:expenditure_management/constants/function/route_function.dart';
 import 'package:expenditure_management/page/forgot/forgot_page.dart';
 import 'package:expenditure_management/page/signup/signup_page.dart';
+import 'package:expenditure_management/page/signup/verify/input_wallet.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -45,27 +44,23 @@ class _LoginFormState extends State<LoginForm> {
       builder: (context, state) {
         if (state is LoginSuccessState && check) {
           if (state.social == Social.email) {
-            Navigator.pop(context);
-          }
-          Fluttertoast.showToast(
-              msg: AppLocalizations.of(context).translate("login_success"));
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            if (state.social == Social.email) {
-              Navigator.pushReplacementNamed(context, "/verify");
-            } else {
-              if (state.social == Social.newUser) {
-                Navigator.pushReplacementNamed(context, '/wallet');
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (state.isNewUser) {
+                Navigator.of(context).pushReplacement(
+                  createRoute(screen: const InputWalletPage()),
+                );
               } else {
                 Navigator.pushReplacementNamed(context, "/main");
               }
-            }
-          });
+            });
+          }
+          Fluttertoast.showToast(
+              msg: AppLocalizations.of(context).translate("login_success"));
         }
 
         if (state is LoginErrorState && check) {
           Navigator.pop(context);
-          Fluttertoast.showToast(
-              msg: AppLocalizations.of(context).translate(state.status));
+          Fluttertoast.showToast(msg: state.status);
         }
         check = true;
 

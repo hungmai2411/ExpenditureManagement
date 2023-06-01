@@ -1,6 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:expenditure_management/constants/app_styles.dart';
 import 'package:expenditure_management/constants/list.dart';
+import 'package:expenditure_management/models/type.dart';
+import 'package:expenditure_management/repository/type_repository.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -18,12 +20,20 @@ class _ChooseTypeState extends State<ChooseType> with TickerProviderStateMixin {
   final _name = TextEditingController();
   List<String> title = ["all", "spending", "income"];
   String selectedValue = "all";
+  List<SpendingType> types = [];
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     _typeController.addListener(() => setState(() {}));
+    getAllTypes();
     super.initState();
+  }
+
+  void getAllTypes() async {
+    types = await TypeRepository().getAllTypes();
+    setState(() {});
+    print(types.length);
   }
 
   @override
@@ -114,75 +124,81 @@ class _ChooseTypeState extends State<ChooseType> with TickerProviderStateMixin {
           ),
         ),
       ),
-      body: ListView.builder(
-        itemCount: listType.length,
-        itemBuilder: (context, index) {
-          int choose = title.indexOf(selectedValue);
-          bool checkSearch = AppLocalizations.of(context)
-              .translate(listType[index]["title"]!)
-              .toLowerCase()
-              .contains(_typeController.text.toLowerCase());
-          if ((checkSearch) &&
-              (choose == 0 ||
-                  choose == 2 &&
-                      [29, 30, 34, 36, 37, 40, 27, 35, 38, 41]
-                          .contains(index) ||
-                  choose == 1 &&
-                      ![29, 30, 34, 36, 37, 40, 35].contains(index))) {
-            if ([0, 10, 21, 27, 35, 38].contains(index)) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 10, left: 15),
-                child: Text(
-                  AppLocalizations.of(context)
-                      .translate(listType[index]["title"]!),
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              );
-            }
+      body: types.isEmpty
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView.builder(
+              itemCount: types.length,
+              itemBuilder: (context, index) {
+                int choose = title.indexOf(selectedValue);
+                bool checkSearch = AppLocalizations.of(context)
+                    .translate(listType[index]["title"]!)
+                    .toLowerCase()
+                    .contains(_typeController.text.toLowerCase());
+                if ((checkSearch) &&
+                    (choose == 0 ||
+                        choose == 2 &&
+                            [29, 30, 34, 36, 37, 40, 27, 35, 38, 41]
+                                .contains(index) ||
+                        choose == 1 &&
+                            ![29, 30, 34, 36, 37, 40, 35].contains(index))) {
+                  if ([0, 10, 21, 27, 35, 38].contains(index)) {
+                    return Padding(
+                      padding:
+                          const EdgeInsets.only(top: 20, bottom: 10, left: 15),
+                      child: Text(
+                        AppLocalizations.of(context).translate(
+                          types[index].name,
+                        ),
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
 
-            return InkWell(
-              onTap: () async {
-                if (index != 41) {
-                  widget.action(
-                      index, _tabController.index == 0 ? -1 : 1, null);
-                  Navigator.pop(context);
-                } else {
-                  await showNewType();
-                  _name.text = "";
+                  return InkWell(
+                    onTap: () async {
+                      if (index != 41) {
+                        widget.action(
+                            index, _tabController.index == 0 ? -1 : 1, null);
+                        Navigator.pop(context);
+                      } else {
+                        await showNewType();
+                        _name.text = "";
+                      }
+                    },
+                    child: Material(
+                      elevation: 2,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
+                        height: 60,
+                        width: double.infinity,
+                        child: Row(
+                          children: [
+                            Image.network(
+                              types[index].image,
+                              width: 40,
+                            ),
+                            const SizedBox(width: 15),
+                            Text(
+                              AppLocalizations.of(context)
+                                  .translate(types[index].name),
+                              style: AppStyles.p,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 }
+                return const SizedBox.shrink();
               },
-              child: Material(
-                elevation: 2,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  height: 60,
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        listType[index]["image"]!,
-                        width: 40,
-                      ),
-                      const SizedBox(width: 15),
-                      Text(
-                        AppLocalizations.of(context)
-                            .translate(listType[index]["title"]!),
-                        style: AppStyles.p,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
-          return const SizedBox.shrink();
-        },
-      ),
+            ),
     );
   }
 

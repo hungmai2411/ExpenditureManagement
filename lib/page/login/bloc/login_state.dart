@@ -6,7 +6,11 @@ class InitState extends LoginState {}
 
 class LoginSuccessState extends LoginState {
   final Social social;
-  LoginSuccessState({required this.social});
+  final bool isNewUser;
+  LoginSuccessState({
+    required this.social,
+    required this.isNewUser,
+  });
 }
 
 class LoginErrorState extends LoginState {
