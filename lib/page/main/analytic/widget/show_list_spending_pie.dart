@@ -9,7 +9,9 @@ import 'package:intl/intl.dart';
 Widget showListSpendingPie({required List<Spending> list}) {
   var numberFormat = NumberFormat.currency(locale: "vi_VI");
   int sum = list.isNotEmpty
-      ? list.map((e) => e.money).reduce((value, element) => value + element)
+      ? list
+          .map((e) => e.moneySpend!)
+          .reduce((value, element) => value + element)
       : 1;
 
   return ListView.builder(
@@ -21,10 +23,10 @@ Widget showListSpendingPie({required List<Spending> list}) {
         return const SizedBox.shrink();
       } else {
         List<Spending> spendingList =
-            list.where((element) => element.type == index).toList();
+            list.where((element) => element.typeId == index).toList();
         if (spendingList.isNotEmpty) {
           int sumSpending = spendingList
-              .map((e) => e.money)
+              .map((e) => e.moneySpend!)
               .reduce((value, element) => value + element);
 
           return InkWell(

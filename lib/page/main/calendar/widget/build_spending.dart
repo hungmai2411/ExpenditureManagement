@@ -62,29 +62,29 @@ class BuildSpending extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: Row(
                 children: [
-                  Image.asset(
-                    listType[spendingList[index].type]["image"]!,
-                    width: 40,
-                  ),
+                  // Image.asset(
+                  //   listType[spendingList[index].type]["image"]!,
+                  //   width: 40,
+                  // ),
                   const SizedBox(width: 10),
-                  Container(
-                    constraints: const BoxConstraints(maxWidth: 100),
-                    child: Text(
-                      spendingList[index].type == 41
-                          ? spendingList[index].typeName!
-                          : AppLocalizations.of(context).translate(
-                              listType[spendingList[index].type]["title"]!),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   constraints: const BoxConstraints(maxWidth: 100),
+                  //   child: Text(
+                  //     spendingList[index].type == 41
+                  //         ? spendingList[index].typeName!
+                  //         : AppLocalizations.of(context).translate(
+                  //             listType[spendingList[index].type]["title"]!),
+                  //     overflow: TextOverflow.ellipsis,
+                  //     maxLines: 2,
+                  //     style: const TextStyle(
+                  //       fontSize: 16,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
                   Expanded(
                     child: Text(
-                      numberFormat.format(spendingList[index].money),
+                      numberFormat.format(spendingList[index].moneySpend),
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.end,
                       style: const TextStyle(fontSize: 16),

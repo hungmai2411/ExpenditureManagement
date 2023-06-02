@@ -10,20 +10,20 @@ class TotalReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Spending> spendingList =
-        list.where((element) => element.money < 0).toList();
+        list.where((element) => element.moneySpend! < 0).toList();
 
     int spending = spendingList.isEmpty
         ? 0
         : spendingList
-            .map((e) => e.money)
+            .map((e) => e.moneySpend!)
             .reduce((value, element) => value + element);
 
-    spendingList = list.where((element) => element.money > 0).toList();
+    spendingList = list.where((element) => element.moneySpend! > 0).toList();
 
     int income = spendingList.isEmpty
         ? 0
         : spendingList
-            .map((e) => e.money)
+            .map((e) => e.moneySpend!)
             .reduce((value, element) => value + element);
 
     return Column(

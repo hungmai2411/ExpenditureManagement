@@ -52,6 +52,7 @@ class _EditSpendingPageState extends State<EditSpendingPage> {
   List<String> friends = [];
   List<Color> colors = [];
   bool checkPickImage = false;
+  int? idType;
 
   @override
   void dispose() {
@@ -65,9 +66,9 @@ class _EditSpendingPageState extends State<EditSpendingPage> {
   @override
   void initState() {
     _money.text = NumberFormat.currency(locale: "vi_VI")
-        .format(widget.spending.money.abs());
+        .format(widget.spending.moneySpend!.abs());
     _location.text = widget.spending.location ?? "";
-    friends.addAll(widget.spending.friends ?? []);
+    //friends.addAll(widget.spending.friends ?? []);
     for (var _ in friends) {
       colors.add(Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
           Random().nextInt(255), 1));
@@ -75,14 +76,14 @@ class _EditSpendingPageState extends State<EditSpendingPage> {
     if (widget.spending.note != null) {
       _note.text = widget.spending.note!;
     }
-    selectedDate = widget.spending.dateTime;
+    selectedDate = DateTime.parse(widget.spending.timeSpend!);
     selectedTime = TimeOfDay(
-      hour: widget.spending.dateTime.hour,
-      minute: widget.spending.dateTime.minute,
+      hour: selectedDate.hour,
+      minute: selectedDate.minute,
     );
-    type = widget.spending.type;
-    typeName = widget.spending.typeName;
-    coefficient = widget.spending.money < 0 ? -1 : 1;
+    //type = widget.spending.type;
+    //typeName = widget.spending.typeName;
+    coefficient = widget.spending.moneySpend! < 0 ? -1 : 1;
 
     super.initState();
   }
@@ -158,11 +159,12 @@ class _EditSpendingPageState extends State<EditSpendingPage> {
                         Navigator.of(context).push(
                           createRoute(
                             screen: ChooseType(
-                              action: (index, coefficient, name) {
+                              action: (index, coefficient, name, idType) {
                                 setState(() {
                                   type = index;
                                   this.coefficient = coefficient;
                                   typeName = name;
+                                  this.idType = idType;
                                 });
                               },
                             ),
@@ -367,34 +369,34 @@ class _EditSpendingPageState extends State<EditSpendingPage> {
         moneyString.isNotEmpty &&
         moneyString.compareTo("0") != 0) {
       int money = int.parse(moneyString);
-      Spending spending = Spending(
-        id: widget.spending.id,
-        money: type == 41
-            ? coefficient * money
-            : ([29, 30, 34, 36, 37, 40].contains(type!) ? 1 : -1) * money,
-        type: type!,
-        typeName: typeName != null ? typeName!.trim() : typeName,
-        dateTime: DateTime(
-          selectedDate.year,
-          selectedDate.month,
-          selectedDate.day,
-          selectedTime.hour,
-          selectedTime.minute,
-        ),
-        note: _note.text.trim(),
-        image: widget.spending.image,
-        location: _location.text.trim(),
-        friends: friends,
-      );
+      // Spending spending = Spending(
+      //   id: widget.spending.id,
+      //   money: type == 41
+      //       ? coefficient * money
+      //       : ([29, 30, 34, 36, 37, 40].contains(type!) ? 1 : -1) * money,
+      //   type: type!,
+      //   typeName: typeName != null ? typeName!.trim() : typeName,
+      //   dateTime: DateTime(
+      //     selectedDate.year,
+      //     selectedDate.month,
+      //     selectedDate.day,
+      //     selectedTime.hour,
+      //     selectedTime.minute,
+      //   ),
+      //   note: _note.text.trim(),
+      //   image: widget.spending.image,
+      //   location: _location.text.trim(),
+      //   friends: friends,
+      // );
       loadingAnimation(context);
-      await SpendingFirebase.updateSpending(
-        spending,
-        widget.spending.dateTime,
-        image != null ? File(image!.path) : null,
-        checkPickImage,
-      );
+      // await SpendingFirebase.updateSpending(
+      //   spending,
+      //   widget.spending.dateTime,
+      //   image != null ? File(image!.path) : null,
+      //   checkPickImage,
+      // );
       if (widget.change != null) {
-        widget.change!(spending, colors);
+        //widget.change!(spending, colors);
       }
       if (!mounted) return;
       Navigator.pop(context);

@@ -1,75 +1,56 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
 
 class Spending {
-  String? id;
-  int money;
-  int type;
+  int? walletId;
+  int? typeId;
+  int? moneySpend;
+  String? timeSpend;
   String? note;
-  DateTime dateTime;
-  String? image;
-  String? typeName;
   String? location;
-  List<String>? friends;
-
+  String? image;
+  List<int>? listFriendId;
   Spending({
-    this.id,
-    required this.money,
-    required this.type,
-    required this.dateTime,
+    this.walletId,
+    this.typeId,
+    this.moneySpend,
+    this.timeSpend,
     this.note,
-    this.image,
-    this.typeName,
     this.location,
-    this.friends,
+    this.image,
+    this.listFriendId,
   });
 
-  Map<String, dynamic> toMap() => {
-        "money": money,
-        "type": type,
-        "note": note,
-        "date": dateTime,
-        "image": image,
-        "typeName": typeName,
-        "location": location,
-        "friends": friends
-      };
-
-  factory Spending.fromFirebase(DocumentSnapshot snapshot) {
-    var data = snapshot.data() as Map<String, dynamic>;
-    return Spending(
-        id: snapshot.id,
-        money: data["money"],
-        type: data["type"],
-        dateTime: (data["date"] as Timestamp).toDate(),
-        note: data["note"],
-        image: data["image"],
-        typeName: data["typeName"],
-        location: data["location"],
-        friends: (data["friends"] as List<dynamic>)
-            .map((e) => e.toString())
-            .toList());
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'walletId': walletId,
+      'typeId': typeId,
+      'moneySpend': moneySpend,
+      'timeSpend': timeSpend,
+      'note': note,
+      'location': location,
+      'image': image,
+      'listFriendId': listFriendId,
+    };
   }
 
-  Spending copyWith({
-    int? money,
-    int? type,
-    DateTime? dateTime,
-    String? note,
-    String? image,
-    String? typeName,
-    String? location,
-    List<String>? friends,
-  }) {
+  factory Spending.fromMap(Map<String, dynamic> map) {
     return Spending(
-      id: id,
-      money: money ?? this.money,
-      type: type ?? this.type,
-      dateTime: dateTime ?? this.dateTime,
-      note: note ?? this.note,
-      image: image ?? this.image,
-      typeName: typeName ?? this.typeName,
-      location: location ?? this.location,
-      friends: friends ?? this.friends,
+      walletId: map['walletId'] != null ? map['walletId'] as int : null,
+      typeId: map['typeId'] != null ? map['typeId'] as int : null,
+      moneySpend: map['moneySpend'] != null ? map['moneySpend'] as int : null,
+      timeSpend: map['timeSpend'] != null ? map['timeSpend'] as String : null,
+      note: map['note'] != null ? map['note'] as String : null,
+      location: map['location'] != null ? map['location'] as String : null,
+      image: map['image'] != null ? map['image'] as String : null,
+      listFriendId: map['listFriendId'] != null
+          ? List<int>.from((map['listFriendId'] as List<int>))
+          : null,
     );
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory Spending.fromJson(String source) =>
+      Spending.fromMap(json.decode(source) as Map<String, dynamic>);
 }

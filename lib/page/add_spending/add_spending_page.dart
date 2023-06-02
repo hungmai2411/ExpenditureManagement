@@ -41,6 +41,7 @@ class _AddSpendingPageState extends State<AddSpendingPage> {
   int coefficient = 1;
   List<String> friends = [];
   List<Color> colors = [];
+  int? idType;
 
   @override
   void dispose() {
@@ -121,11 +122,12 @@ class _AddSpendingPageState extends State<AddSpendingPage> {
                         Navigator.of(context).push(
                           createRoute(
                             screen: ChooseType(
-                              action: (index, coefficient, name) {
+                              action: (index, coefficient, name, idType) {
                                 setState(() {
                                   type = index;
                                   typeName = name;
                                   this.coefficient = coefficient;
+                                  this.idType = idType;
                                 });
                               },
                             ),

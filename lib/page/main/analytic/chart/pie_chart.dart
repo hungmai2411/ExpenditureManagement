@@ -30,7 +30,7 @@ class _MyPieChartState extends State<MyPieChart> {
   @override
   Widget build(BuildContext context) {
     sum = widget.list
-        .map((e) => e.money.abs())
+        .map((e) => e.moneySpend!.abs())
         .reduce((value, element) => value + element);
 
     return AspectRatio(
@@ -63,7 +63,7 @@ class _MyPieChartState extends State<MyPieChart> {
     for (int i = 0; i < listType.length; i++) {
       if (![0, 10, 21, 27, 35, 38].contains(i)) {
         List<Spending> spendingList =
-            widget.list.where((element) => element.type == i).toList();
+            widget.list.where((element) => element.typeId == i).toList();
         if (spendingList.isNotEmpty) {
           final isTouched = pieChartList.length == touchedIndex;
           final fontSize = isTouched ? 20.0 : 16.0;
@@ -71,7 +71,7 @@ class _MyPieChartState extends State<MyPieChart> {
           final widgetSize = isTouched ? 55.0 : 40.0;
 
           int sumSpending = spendingList
-              .map((e) => e.money.abs())
+              .map((e) => e.moneySpend!.abs())
               .reduce((value, element) => value + element);
 
           pieChartList.add(

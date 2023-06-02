@@ -24,14 +24,14 @@ class ItemSpendingWidget extends StatelessWidget {
               if ([0, 10, 21, 27, 35, 38].contains(index)) {
                 return const SizedBox.shrink();
               } else {
-                var list = spendingList!
-                    .where((element) => element.type == index)
-                    .toList();
-                if (list.isNotEmpty) {
-                  return body(context, index, list);
-                } else {
-                  return const SizedBox.shrink();
-                }
+                // var list = spendingList!
+                //     .where((element) => element.type == index)
+                //     .toList();
+                // if (list.isNotEmpty) {
+                //   return body(context, index, list);
+                // } else {
+                //   return const SizedBox.shrink();
+                // }
               }
             },
           )
@@ -72,16 +72,16 @@ class ItemSpendingWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              Expanded(
-                child: Text(
-                  numberFormat.format(list
-                      .map((e) => e.money)
-                      .reduce((value, element) => value + element)),
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.end,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ),
+              // Expanded(
+              //   child: Text(
+              //     numberFormat.format(list
+              //         .map((e) => e.money)
+              //         .reduce((value, element) => value + element)),
+              //     overflow: TextOverflow.ellipsis,
+              //     textAlign: TextAlign.end,
+              //     style: const TextStyle(fontSize: 16),
+              //   ),
+              // ),
               const SizedBox(width: 10),
               const Icon(Icons.arrow_forward_ios_outlined)
             ],

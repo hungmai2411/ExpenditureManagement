@@ -33,17 +33,17 @@ class TotalSpending extends StatelessWidget {
 
     if (list != null) {
       List<Spending> incomeList =
-          list!.where((element) => element.money > 0).toList();
+          list!.where((element) => element.moneySpend! > 0).toList();
       if (incomeList.isNotEmpty) {
         income = incomeList
-            .map((e) => e.money)
+            .map((e) => e.moneySpend!)
             .reduce((value, element) => value + element);
       }
       List<Spending> spendingList =
-          list!.where((element) => element.money < 0).toList();
+          list!.where((element) => element.moneySpend! < 0).toList();
       if (spendingList.isNotEmpty) {
         spending = spendingList
-            .map((e) => e.money)
+            .map((e) => e.moneySpend!)
             .reduce((value, element) => value + element);
       }
     }

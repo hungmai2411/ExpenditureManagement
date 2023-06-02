@@ -31,10 +31,12 @@ class _ShowListSpendingColumnState extends State<ShowListSpendingColumn> {
   @override
   Widget build(BuildContext context) {
     List<DateTime> listDate = widget.index == 0
-        ? getListDayOfWeek(widget.spendingList[0].dateTime)
+        ? getListDayOfWeek(DateTime.parse(widget.spendingList[0].timeSpend!))
         : (widget.index == 1
-            ? getListWeekOfMonth(widget.spendingList[0].dateTime)
-            : getListMonthOfYear(widget.spendingList[0].dateTime));
+            ? getListWeekOfMonth(
+                DateTime.parse(widget.spendingList[0].timeSpend!))
+            : getListMonthOfYear(
+                DateTime.parse(widget.spendingList[0].timeSpend!)));
 
     return BlocBuilder<SettingCubit, SettingState>(
         buildWhen: (previous, current) => previous != current,
@@ -51,17 +53,17 @@ class _ShowListSpendingColumnState extends State<ShowListSpendingColumn> {
       itemBuilder: (context, index) {
         List<Spending> list = widget.index == 0
             ? widget.spendingList
-                .where(
-                    (element) => isSameDay(element.dateTime, listDate[index]))
+                .where((element) => isSameDay(
+                    DateTime.parse(element.timeSpend!), listDate[index]))
                 .toList()
             : (widget.index == 1
                 ? widget.spendingList
-                    .where((element) =>
-                        checkOnWeek(listDate[index], element.dateTime))
+                    .where((element) => checkOnWeek(
+                        listDate[index], DateTime.parse(element.timeSpend!)))
                     .toList()
                 : widget.spendingList
-                    .where((element) =>
-                        isSameMonth(element.dateTime, listDate[index]))
+                    .where((element) => isSameMonth(
+                        DateTime.parse(element.timeSpend!), listDate[index]))
                     .toList());
 
         if (list.isEmpty) {
@@ -101,8 +103,8 @@ class _ShowListSpendingColumnState extends State<ShowListSpendingColumn> {
                     Text(
                       list.isNotEmpty
                           ? numberFormat.format(list
-                              .map((e) => e.money)
-                              .reduce((value, element) => value + element))
+                              .map((e) => e.moneySpend)
+                              .reduce((value, element) => value! + element!))
                           : "0 VND",
                       style: const TextStyle(
                         fontSize: 16,
@@ -131,7 +133,7 @@ class _ShowListSpendingColumnState extends State<ShowListSpendingColumn> {
     return Column(
       children: List.generate(listType.length, (index) {
         List<Spending> list =
-            listSpending.where((element) => element.type == index).toList();
+            listSpending.where((element) => element.typeId == index).toList();
 
         if (list.isEmpty) {
           return const SizedBox.shrink();
@@ -166,8 +168,8 @@ class _ShowListSpendingColumnState extends State<ShowListSpendingColumn> {
                 Expanded(
                   child: Text(
                     numberFormat.format(list
-                        .map((e) => e.money)
-                        .reduce((value, element) => value + element)),
+                        .map((e) => e.moneySpend)
+                        .reduce((value, element) => value! + element!)),
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.end,
                     style: const TextStyle(fontSize: 16),

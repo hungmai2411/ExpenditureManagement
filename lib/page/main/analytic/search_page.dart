@@ -32,49 +32,56 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   bool checkResult(Spending spending) {
-    if (!AppLocalizations.of(context)
-        .translate(listType[spending.type]["title"]!)
-        .toUpperCase()
-        .contains(query!.toUpperCase())) return false;
+    // if (!AppLocalizations.of(context)
+    //     .translate(listType[spending.]["title"]!)
+    //     .toUpperCase()
+    //     .contains(query!.toUpperCase())) return false;
 
-    if (filter.chooseIndex[0] == 1 && spending.money.abs() < filter.money) {
+    if (filter.chooseIndex[0] == 1 &&
+        spending.moneySpend!.abs() < filter.money) {
       return false;
     } else if (filter.chooseIndex[0] == 2 &&
-        spending.money.abs() > filter.money) {
+        spending.moneySpend!.abs() > filter.money) {
       return false;
     } else if (filter.chooseIndex[0] == 3 &&
-        (spending.money.abs() > filter.finishMoney ||
-            spending.money.abs() < filter.money)) {
+        (spending.moneySpend!.abs() > filter.finishMoney ||
+            spending.moneySpend!.abs() < filter.money)) {
       return false;
     } else if (filter.chooseIndex[0] == 4 &&
-        spending.money.abs() == filter.money) {
+        spending.moneySpend!.abs() == filter.money) {
       return false;
     }
 
     if (filter.chooseIndex[1] == 1 &&
-        filter.time!.isAfter(spending.dateTime.formatToDate())) {
+        filter.time!
+            .isAfter(DateTime.parse(spending.timeSpend!).formatToDate())) {
       return false;
     } else if (filter.chooseIndex[1] == 2 &&
-        filter.time!.isBefore(spending.dateTime.formatToDate())) {
+        filter.time!
+            .isBefore(DateTime.parse(spending.timeSpend!).formatToDate())) {
       return false;
     } else if (filter.chooseIndex[1] == 3 &&
-        (spending.dateTime.formatToDate().isAfter(filter.finishTime!) ||
-            spending.dateTime.formatToDate().isBefore(filter.time!))) {
+        (DateTime.parse(spending.timeSpend!)
+                .formatToDate()
+                .isAfter(filter.finishTime!) ||
+            DateTime.parse(spending.timeSpend!)
+                .formatToDate()
+                .isBefore(filter.time!))) {
       return false;
     } else if (filter.chooseIndex[1] == 4 &&
-        isSameDay(spending.dateTime, filter.time)) {
+        isSameDay(DateTime.parse(spending.timeSpend!), filter.time)) {
       return false;
     }
 
-    if (filter.chooseIndex[2] == 1 && spending.money < 0) {
+    if (filter.chooseIndex[2] == 1 && spending.moneySpend! < 0) {
       return false;
-    } else if (filter.chooseIndex[2] == 2 && spending.money > 0) {
+    } else if (filter.chooseIndex[2] == 2 && spending.moneySpend! > 0) {
       return false;
     }
 
     if (filter.friends!.isNotEmpty) {
       List<String> list = filter.friends!
-          .where((element) => spending.friends!.contains(element))
+          .where((element) => spending.listFriendId!.contains(element))
           .toList();
 
       if (list.isEmpty) return false;

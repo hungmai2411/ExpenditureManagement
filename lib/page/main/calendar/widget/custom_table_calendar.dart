@@ -52,7 +52,8 @@ class CustomTableCalendar extends StatelessWidget {
             eventLoader: (day) {
               return dataSpending != null
                   ? dataSpending!
-                      .where((element) => isSameDay(element.dateTime, day))
+                      .where((element) =>
+                          isSameDay(DateTime.parse(element.timeSpend!), day))
                       .toList()
                   : [];
             },

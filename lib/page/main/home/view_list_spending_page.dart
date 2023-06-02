@@ -14,12 +14,12 @@ class ViewListSpendingPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
-        title: Text(
-          spendingList[0].type == 41
-              ? spendingList[0].typeName!
-              : AppLocalizations.of(context)
-                  .translate(listType[spendingList[0].type]["title"]!),
-        ),
+        // title: Text(
+        //   spendingList[0].type == 41
+        //       ? spendingList[0].typeName!
+        //       : AppLocalizations.of(context)
+        //           .translate(listType[spendingList[0].type]["title"]!),
+        // ),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {

@@ -32,10 +32,14 @@ class _ItemSpendingDayState extends State<ItemSpendingDay> {
 
   @override
   Widget build(BuildContext context) {
-    widget.spendingList.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    widget.spendingList.sort((a, b) =>
+        DateTime.parse(b.timeSpend!).compareTo(DateTime.parse(a.timeSpend!)));
 
     var listDate = widget.spendingList
-        .map((e) => DateTime(e.dateTime.year, e.dateTime.month, e.dateTime.day))
+        .map((e) => DateTime(
+            DateTime.parse(e.timeSpend!).year,
+            DateTime.parse(e.timeSpend!).month,
+            DateTime.parse(e.timeSpend!).day))
         .toList()
         .toSet()
         .toList();
@@ -59,7 +63,8 @@ class _ItemSpendingDayState extends State<ItemSpendingDay> {
       itemCount: listDate.length,
       itemBuilder: (context, index) {
         var list = widget.spendingList
-            .where((element) => isSameDay(element.dateTime, listDate[index]))
+            .where((element) =>
+                isSameDay(DateTime.parse(element.timeSpend!), listDate[index]))
             .toList();
 
         return Padding(
@@ -92,7 +97,7 @@ class _ItemSpendingDayState extends State<ItemSpendingDay> {
                       const Spacer(),
                       Text(
                         numberFormat.format(list
-                            .map((e) => e.money)
+                            .map((e) => e.moneySpend!)
                             .reduce((value, element) => value + element)),
                         style: const TextStyle(
                           fontSize: 16,
@@ -129,21 +134,21 @@ class _ItemSpendingDayState extends State<ItemSpendingDay> {
                   spending: list[index],
                   change: (spending) async {
                     try {
-                      spending.image = await FirebaseStorage.instance
-                          .ref()
-                          .child("spending/${spending.id}.png")
-                          .getDownloadURL();
+                      // spending.image = await FirebaseStorage.instance
+                      //     .ref()
+                      //     .child("spending/${spending.id}.png")
+                      //     .getDownloadURL();
                     } catch (_) {}
-                    widget.spendingList.removeWhere(
-                        (element) => element.id!.compareTo(spending.id!) == 0);
+                    // widget.spendingList.removeWhere(
+                    //     (element) => element.id!.compareTo(spending.id!) == 0);
                     setState(() {
                       widget.spendingList.add(spending);
                     });
                   },
                   delete: (id) {
                     setState(() {
-                      widget.spendingList.removeWhere(
-                          (element) => element.id!.compareTo(id) == 0);
+                      // widget.spendingList.removeWhere(
+                      //     (element) => element.id!.compareTo(id) == 0);
                     });
                   },
                 ),
@@ -154,29 +159,29 @@ class _ItemSpendingDayState extends State<ItemSpendingDay> {
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
-                  Image.asset(
-                    listType[list[index].type]["image"]!,
-                    width: 40,
-                  ),
+                  // Image.asset(
+                  //   listType[list[index].type]["image"]!,
+                  //   width: 40,
+                  // ),
                   const SizedBox(width: 10),
-                  Container(
-                    constraints: const BoxConstraints(maxWidth: 100),
-                    child: Text(
-                      list[index].type == 41
-                          ? list[index].typeName!
-                          : AppLocalizations.of(context)
-                              .translate(listType[list[index].type]["title"]!),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   constraints: const BoxConstraints(maxWidth: 100),
+                  //   child: Text(
+                  //     list[index].type == 41
+                  //         ? list[index].typeName!
+                  //         : AppLocalizations.of(context)
+                  //             .translate(listType[list[index].type]["title"]!),
+                  //     maxLines: 2,
+                  //     overflow: TextOverflow.ellipsis,
+                  //     style: const TextStyle(
+                  //       fontSize: 16,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
                   Expanded(
                     child: Text(
-                      numberFormat.format(list[index].money),
+                      numberFormat.format(list[index].moneySpend),
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.end,
                       style: const TextStyle(fontSize: 16),

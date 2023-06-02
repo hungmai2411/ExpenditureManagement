@@ -42,11 +42,11 @@ class _ViewSpendingPageState extends State<ViewSpendingPage> {
 
   @override
   void initState() {
-    for (var _ in widget.spending.friends!) {
-      colors.add(Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
-          Random().nextInt(255), 1));
-    }
-    spending = widget.spending.copyWith();
+    // for (var _ in widget.spending.friends!) {
+    //   colors.add(Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
+    //       Random().nextInt(255), 1));
+    // }
+    // spending = widget.spending.copyWith();
     super.initState();
   }
 
@@ -89,10 +89,10 @@ class _ViewSpendingPageState extends State<ViewSpendingPage> {
                   spending: spending,
                   change: (spending, colors) async {
                     try {
-                      spending.image = await FirebaseStorage.instance
-                          .ref()
-                          .child("spending/${spending.id}.png")
-                          .getDownloadURL();
+                      // spending.image = await FirebaseStorage.instance
+                      //     .ref()
+                      //     .child("spending/${spending.id}.png")
+                      //     .getDownloadURL();
                     } catch (_) {}
                     if (widget.change != null) {
                       widget.change!(spending);
@@ -288,39 +288,39 @@ class _ViewSpendingPageState extends State<ViewSpendingPage> {
           ),
         ),
         const SizedBox(width: 10),
-        if (spending.friends!.isNotEmpty)
-          Expanded(
-            child: Wrap(
-              runSpacing: 5,
-              spacing: 2,
-              children: List.generate(spending.friends!.length, (index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Container(
-                    padding: const EdgeInsets.only(right: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(90),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        circleText(
-                          text: spending.friends![index][0],
-                          color: colors[index],
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          spending.friends![index],
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-            ),
-          )
+        // if (spending.friends!.isNotEmpty)
+        //   Expanded(
+        //     child: Wrap(
+        //       runSpacing: 5,
+        //       spacing: 2,
+        //       children: List.generate(spending.friends!.length, (index) {
+        //         return Padding(
+        //           padding: const EdgeInsets.symmetric(horizontal: 5),
+        //           child: Container(
+        //             padding: const EdgeInsets.only(right: 10),
+        //             decoration: BoxDecoration(
+        //               color: Colors.grey.withOpacity(0.7),
+        //               borderRadius: BorderRadius.circular(90),
+        //             ),
+        //             child: Row(
+        //               mainAxisSize: MainAxisSize.min,
+        //               children: [
+        //                 circleText(
+        //                   text: spending.friends![index][0],
+        //                   color: colors[index],
+        //                 ),
+        //                 const SizedBox(width: 10),
+        //                 Text(
+        //                   spending.friends![index],
+        //                   style: const TextStyle(fontSize: 16),
+        //                 ),
+        //               ],
+        //             ),
+        //           ),
+        //         );
+        //       }),
+        //     ),
+        //   )
       ],
     );
   }
@@ -359,9 +359,9 @@ class _ViewSpendingPageState extends State<ViewSpendingPage> {
                   onPressed: () async {
                     loadingAnimation(context);
                     await SpendingFirebase.deleteSpending(spending);
-                    if (widget.delete != null) {
-                      widget.delete!(spending.id!);
-                    }
+                    // if (widget.delete != null) {
+                    //   widget.delete!(spending.id!);
+                    // }
                     if (!mounted) return;
                     Navigator.pop(context);
                     Navigator.pop(context);

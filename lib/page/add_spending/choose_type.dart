@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class ChooseType extends StatefulWidget {
   const ChooseType({Key? key, required this.action}) : super(key: key);
-  final Function(int index, int coefficient, String? name) action;
+  final Function(int index, int coefficient, String? name, int idType) action;
 
   @override
   State<ChooseType> createState() => _ChooseTypeState();
@@ -164,7 +164,11 @@ class _ChooseTypeState extends State<ChooseType> with TickerProviderStateMixin {
                     onTap: () async {
                       if (index != 41) {
                         widget.action(
-                            index, _tabController.index == 0 ? -1 : 1, null);
+                          index,
+                          _tabController.index == 0 ? -1 : 1,
+                          null,
+                          types[index].id!,
+                        );
                         Navigator.pop(context);
                       } else {
                         await showNewType();
@@ -265,7 +269,11 @@ class _ChooseTypeState extends State<ChooseType> with TickerProviderStateMixin {
                 ElevatedButton(
                   onPressed: () {
                     widget.action(
-                        41, _tabController.index == 0 ? -1 : 1, _name.text);
+                      41,
+                      _tabController.index == 0 ? -1 : 1,
+                      _name.text,
+                      -1,
+                    );
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
