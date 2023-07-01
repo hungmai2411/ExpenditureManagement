@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:expenditure_management/constants/environment.dart';
 import 'package:expenditure_management/models/spending.dart';
+import 'package:expenditure_management/models/summary.dart' as s;
 import 'package:expenditure_management/models/user.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,11 +11,20 @@ class SpendingRepository {
   String loginURL = 'auth/login';
   String registerURL = 'auth/register';
   String createSpendingURL = 'spends/create';
-
+  String getAllSpendingURL = 'spends/by-date';
+  String getSummaryURL = 'balances/by-month';
+  String getAllSpendingByMonth = 'spends/by-month';
+  String deleteSpendingURL = 'spends/delete';
+  String getSpendingByDateURL = 'spends/by-month';
   SpendingRepository() {
     loginURL = url + loginURL;
     registerURL = url + registerURL;
     createSpendingURL = url + createSpendingURL;
+    getAllSpendingURL = url + getAllSpendingURL;
+    getSummaryURL = url + getSummaryURL;
+    getSpendingByDateURL = url + getSpendingByDateURL;
+    getAllSpendingByMonth = url + getAllSpendingByMonth;
+    deleteSpendingURL = url + deleteSpendingURL;
   }
 
   Future<void> createSpending(Spending spending) async {
@@ -31,6 +41,89 @@ class SpendingRepository {
     } catch (e) {
       log('error create spend: $e');
     }
+  }
+
+//https://spendingmanagementserver-production.up.railway.app/spends/delete/25
+  Future<void> deleteSpending(Spending spending) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$deleteSpendingURL/${spending.id}'),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+      );
+      log('response:$response');
+    } catch (e) {
+      log('error create spend: $e');
+    }
+  }
+
+  ///1?month=6&year=2023&waletId=1
+
+  Future<s.Summary?> getSummary(
+      int idUser, int month, int year, int walletId) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            '$getSummaryURL/$walletId?month=$month&year=$year&waletId=$walletId'),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+      );
+      return s.Summary.fromMap(jsonDecode(response.body)['data']);
+    } catch (e) {
+      log('error get summary: $e');
+    }
+    return null;
+  }
+
+// https://spendingmanagementserver-production.up.railway.app/spends/by-date/6?date=2023-06-27T23:46:51.367610
+// month=6&year=2023
+  Future<List<Spending>> getAllSpendingsByDate(
+      int userID, int day, int month, int year) async {
+    List<Spending> spendings = [];
+    try {
+      final response = await http.get(
+        Uri.parse(
+            '$getAllSpendingURL/$userID?day=$day&month=$month&year=$year'),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+      );
+      for (var map in jsonDecode(response.body)['data']['spendIndates']) {
+        Spending spending = Spending.fromMap(map);
+        spendings.add(spending);
+      }
+      log('response:$response');
+    } catch (e) {
+      log('get all spendings: $e');
+    }
+    return spendings;
+  }
+
+  Future<List<Spending>> getAllSpendingsByMonth(
+      int userID, int month, int year) async {
+    List<Spending> spendings = [];
+    try {
+      final response = await http.get(
+        Uri.parse('$getAllSpendingByMonth/$userID?month=$month&year=$year'),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+      );
+      for (var map in jsonDecode(response.body)['data']) {
+        Spending spending = Spending.fromMap(map);
+        spendings.add(spending);
+      }
+      log('response:$response');
+    } catch (e) {
+      log('get all spendings: $e');
+    }
+    return spendings;
   }
 
   Future<User?> login(String email, String password) async {

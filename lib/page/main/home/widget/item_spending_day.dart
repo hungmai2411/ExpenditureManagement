@@ -159,26 +159,20 @@ class _ItemSpendingDayState extends State<ItemSpendingDay> {
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
-                  // Image.asset(
-                  //   listType[list[index].type]["image"]!,
-                  //   width: 40,
-                  // ),
+                  Image.network(list[index].imageType!, width: 40),
                   const SizedBox(width: 10),
-                  // Container(
-                  //   constraints: const BoxConstraints(maxWidth: 100),
-                  //   child: Text(
-                  //     list[index].type == 41
-                  //         ? list[index].typeName!
-                  //         : AppLocalizations.of(context)
-                  //             .translate(listType[list[index].type]["title"]!),
-                  //     maxLines: 2,
-                  //     overflow: TextOverflow.ellipsis,
-                  //     style: const TextStyle(
-                  //       fontSize: 16,
-                  //       fontWeight: FontWeight.bold,
-                  //     ),
-                  //   ),
-                  // ),
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 100),
+                    child: Text(
+                      AppLocalizations.of(context).translate(list[index].type!),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: Text(
                       numberFormat.format(list[index].moneySpend),

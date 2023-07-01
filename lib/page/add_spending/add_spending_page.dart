@@ -15,6 +15,7 @@ import 'package:expenditure_management/page/add_spending/widget/item_spending.da
 import 'package:expenditure_management/page/add_spending/widget/more_button.dart';
 import 'package:expenditure_management/page/add_spending/widget/pick_image_widget.dart';
 import 'package:expenditure_management/page/add_spending/widget/remove_icon.dart';
+import 'package:expenditure_management/repository/spending_repository.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -300,25 +301,28 @@ class _AddSpendingPageState extends State<AddSpendingPage> {
         moneyString.compareTo("0") != 0) {
       int money = int.parse(moneyString);
       Spending spending = Spending(
-        money: type == 41
+        moneySpend: type == 41
             ? coefficient * money
             : ([29, 30, 34, 36, 37, 40].contains(type!) ? 1 : -1) * money,
-        type: type!,
-        typeName: typeName != null ? typeName!.trim() : typeName,
-        dateTime: DateTime(
+        typeId: idType,
+        walletId: 5,
+
+        // type: type!,
+        // typeName: typeName != null ? typeName!.trim() : typeName,
+        timeSpend: DateTime(
           selectedDate.year,
           selectedDate.month,
           selectedDate.day,
           selectedTime.hour,
           selectedTime.minute,
-        ),
+        ).toUtc().toIso8601String(),
         note: _note.text.trim(),
         image: image != null ? image!.path : null,
         location: _location.text.trim(),
-        friends: friends,
+        listFriendId: [],
       );
       loadingAnimation(context);
-      await SpendingFirebase.addSpending(spending);
+      await SpendingRepository().createSpending(spending);
       if (!mounted) return;
       Navigator.pop(context);
       Navigator.pop(context);

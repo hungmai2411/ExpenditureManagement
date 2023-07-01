@@ -1,13 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:developer';
+
 import 'package:expenditure_management/constants/app_styles.dart';
 import 'package:expenditure_management/constants/function/extension.dart';
 import 'package:expenditure_management/models/spending.dart';
 import 'package:expenditure_management/page/main/home/widget/item_spending_widget.dart';
 import 'package:expenditure_management/page/main/home/widget/summary_spending.dart';
+import 'package:expenditure_management/repository/spending_repository.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,13 +21,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late TabController _monthController;
   List<DateTime> months = [];
+  List<Spending>? spendings;
+  bool isLoading = true;
+  int idUser = 0;
 
   @override
   void initState() {
     _monthController = TabController(length: 19, vsync: this);
     _monthController.index = 17;
-    _monthController.addListener(() {
-      setState(() {});
+    _monthController.addListener(() async {
+      setState(() {
+        isLoading = true;
+      });
+
+      await getAllSpendings(18 - _monthController.index);
+
+      setState(() {
+        isLoading = false;
+      });
     });
     DateTime now = DateTime(DateTime.now().year, DateTime.now().month);
     months = [DateTime(now.year, now.month + 1), now];
@@ -33,63 +46,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       now = DateTime(now.year, now.month - 1);
       months.add(now);
     }
+    getAllSpendings(18 - _monthController.index);
     super.initState();
+  }
+
+  Future<void> getAllSpendings(int index) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    int userID = prefs.getInt('userID') ?? -1;
+
+    spendings = await SpendingRepository().getAllSpendingsByMonth(
+      userID,
+      months[index].month,
+      months[index].year,
+    );
+
+    setState(() {
+      isLoading = false;
+      idUser = userID;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: body(),
-        // child: StreamBuilder(
-        //   stream: FirebaseFirestore.instance
-        //       .collection("data")
-        //       .doc(FirebaseAuth.instance.currentUser!.uid)
-        //       .snapshots(),
-        //   builder: (context, snapshot) {
-        //     if (snapshot.hasData) {
-        //       List<String> list = [];
-
-        //       if (snapshot.requireData.data() != null) {
-        //         var data = snapshot.requireData.data() as Map<String, dynamic>;
-
-        //         if (data[DateFormat("MM_yyyy")
-        //                 .format(months[18 - _monthController.index])] !=
-        //             null) {
-        //           list = (data[DateFormat("MM_yyyy")
-        //                       .format(months[18 - _monthController.index])]
-        //                   as List<dynamic>)
-        //               .map((e) => e.toString())
-        //               .toList();
-        //         }
-        //       }
-
-        //       return StreamBuilder(
-        //         stream: FirebaseFirestore.instance
-        //             .collection("spending")
-        //             .snapshots(),
-        //         builder: (context, snapshot) {
-        //           if (snapshot.hasData) {
-        //             var spendingList = snapshot.data!.docs
-        //                 .where((element) => list.contains(element.id))
-        //                 .map((e) => Spending.fromFirebase(e))
-        //                 .toList();
-
-        //             return body(spendingList: spendingList);
-        //           }
-        //           return loading();
-        //         },
-        //       );
-        //     }
-        //     return loading();
-        //   },
-        // ),
+        child: isLoading == true ? loading() : body(spendingList: spendings),
       ),
     );
   }
 
   Widget body({List<Spending>? spendingList}) {
-    spendingList = [];
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -127,7 +117,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             }),
           ),
         ),
-        SummarySpending(spendingList: spendingList),
+        SummarySpending(
+          userID: idUser,
+          walletId: 5,
+          month: months[18 - _monthController.index].month,
+          year: months[18 - _monthController.index].year,
+        ),
         const SizedBox(height: 10),
         Text(
           "${AppLocalizations.of(context).translate('spending_list')} ${_monthController.index == 17 ? AppLocalizations.of(context).translate('this_month') : DateFormat("MM/yyyy").format(months[18 - _monthController.index])}",
@@ -168,7 +163,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               color: Colors.grey,
             ),
           ),
-          const SummarySpending(),
+          //const SummarySpending(),
           const SizedBox(height: 10),
           Text(
             AppLocalizations.of(context).translate('this_month_spending_list'),

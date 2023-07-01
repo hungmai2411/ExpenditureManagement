@@ -10,6 +10,10 @@ class Spending {
   String? location;
   String? image;
   List<int>? listFriendId;
+  String? type;
+  String? imageType;
+  int? id;
+
   Spending({
     this.walletId,
     this.typeId,
@@ -19,11 +23,14 @@ class Spending {
     this.location,
     this.image,
     this.listFriendId,
+    this.type,
+    this.imageType,
+    this.id,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'walletId': walletId,
+      'waletId': walletId,
       'typeId': typeId,
       'moneySpend': moneySpend,
       'timeSpend': timeSpend,
@@ -36,7 +43,7 @@ class Spending {
 
   factory Spending.fromMap(Map<String, dynamic> map) {
     return Spending(
-      walletId: map['walletId'] != null ? map['walletId'] as int : null,
+      walletId: map['waletId'] != null ? map['waletId'] as int : null,
       typeId: map['typeId'] != null ? map['typeId'] as int : null,
       moneySpend: map['moneySpend'] != null ? map['moneySpend'] as int : null,
       timeSpend: map['timeSpend'] != null ? map['timeSpend'] as String : null,
@@ -46,6 +53,9 @@ class Spending {
       listFriendId: map['listFriendId'] != null
           ? List<int>.from((map['listFriendId'] as List<int>))
           : null,
+      type: map['type']['name'] ?? '',
+      imageType: map['type']['image'] ?? '',
+      id: map['id'],
     );
   }
 

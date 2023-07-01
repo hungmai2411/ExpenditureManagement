@@ -336,13 +336,13 @@ class _ProfilePageState extends State<ProfilePage> {
       }
 
       for (var item in listData) {
-        await FirebaseFirestore.instance
-            .collection("spending")
-            .doc(item)
-            .get()
-            .then((value) {
-          spendingList.add(Spending.fromFirebase(value));
-        });
+        // await FirebaseFirestore.instance
+        //     .collection("spending")
+        //     .doc(item)
+        //     .get()
+        //     .then((value) {
+        //   //spendingList.add(Spending.fromFirebase(value));
+        // });
       }
     });
     List<List<dynamic>> rows = [];
@@ -359,18 +359,18 @@ class _ProfilePageState extends State<ProfilePage> {
     rows.add(row);
     for (var item in spendingList) {
       List<dynamic> row = [];
-      row.add(item.money);
-      if (!mounted) return;
-      row.add(item.type == 41
-          ? item.typeName
-          : AppLocalizations.of(context)
-              .translate(listType[item.type]['title']!));
-      row.add(item.note);
-      row.add(DateFormat("dd/MM/yyyy - HH:mm:ss").format(item.dateTime));
-      row.add(item.image);
-      row.add(item.location);
-      row.add(item.friends);
-      rows.add(row);
+      // row.add(item.money);
+      // if (!mounted) return;
+      // row.add(item.type == 41
+      //     ? item.typeName
+      //     : AppLocalizations.of(context)
+      //         .translate(listType[item.type]['title']!));
+      // row.add(item.note);
+      // row.add(DateFormat("dd/MM/yyyy - HH:mm:ss").format(item.dateTime));
+      // row.add(item.image);
+      // row.add(item.location);
+      // row.add(item.friends);
+      // rows.add(row);
     }
 
     String csv = const ListToCsvConverter().convert(rows);

@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:expenditure_management/constants/function/route_function.dart';
-import 'package:expenditure_management/constants/list.dart';
 import 'package:expenditure_management/models/spending.dart';
 import 'package:expenditure_management/page/main/home/view_list_spending_page.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
@@ -19,20 +18,22 @@ class ItemSpendingWidget extends StatelessWidget {
             // shrinkWrap: true,
             // physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.all(10),
-            itemCount: listType.length,
+            itemCount: spendingList!.length,
             itemBuilder: (context, index) {
-              if ([0, 10, 21, 27, 35, 38].contains(index)) {
-                return const SizedBox.shrink();
-              } else {
-                // var list = spendingList!
-                //     .where((element) => element.type == index)
-                //     .toList();
-                // if (list.isNotEmpty) {
-                //   return body(context, index, list);
-                // } else {
-                //   return const SizedBox.shrink();
-                // }
+              // if ([0, 10, 21, 27, 35, 38].contains(index)) {
+              //   return const SizedBox.shrink();
+              // } else {
+              var list = spendingList!;
+              // .where((element) => element.typeId == index)
+              // .toList();
+              if (list.isNotEmpty) {
+                return body(context, index, list);
               }
+              return const SizedBox.shrink();
+              //   } else {
+              //     return const SizedBox.shrink();
+              //   }
+              // }
             },
           )
         : loadingItemSpending();
@@ -57,13 +58,12 @@ class ItemSpendingWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Row(
             children: [
-              Image.asset(listType[index]["image"]!, width: 40),
+              Image.network(list[index].imageType!, width: 40),
               const SizedBox(width: 10),
               Container(
                 constraints: const BoxConstraints(maxWidth: 100),
                 child: Text(
-                  AppLocalizations.of(context)
-                      .translate(listType[index]["title"]!),
+                  AppLocalizations.of(context).translate(list[index].type!),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: const TextStyle(
@@ -72,16 +72,14 @@ class ItemSpendingWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              // Expanded(
-              //   child: Text(
-              //     numberFormat.format(list
-              //         .map((e) => e.money)
-              //         .reduce((value, element) => value + element)),
-              //     overflow: TextOverflow.ellipsis,
-              //     textAlign: TextAlign.end,
-              //     style: const TextStyle(fontSize: 16),
-              //   ),
-              // ),
+              Expanded(
+                child: Text(
+                  numberFormat.format(list[index].moneySpend),
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
               const SizedBox(width: 10),
               const Icon(Icons.arrow_forward_ios_outlined)
             ],

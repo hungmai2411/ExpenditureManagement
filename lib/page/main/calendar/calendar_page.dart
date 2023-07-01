@@ -1,15 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenditure_management/constants/function/find_index.dart';
-import 'package:expenditure_management/controls/spending_firebase.dart';
 import 'package:expenditure_management/models/spending.dart';
 import 'package:expenditure_management/page/main/calendar/widget/build_spending.dart';
 import 'package:expenditure_management/page/main/calendar/widget/custom_table_calendar.dart';
 import 'package:expenditure_management/page/main/calendar/widget/total_spending.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:expenditure_management/repository/spending_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({Key? key}) : super(key: key);
@@ -23,112 +18,29 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   var numberFormat = NumberFormat.currency(locale: "vi_VI");
+  int userID = 6;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getSpendings();
+  }
+
+  void getSpendings() async {
+    _currentSpendingList = await SpendingRepository().getAllSpendingsByDate(
+      userID,
+      _focusedDay.day,
+      _focusedDay.month,
+      _focusedDay.year,
+    );
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: loadingData(),
-        // child: StreamBuilder<DocumentSnapshot>(
-        //     stream: FirebaseFirestore.instance
-        //         .collection("data")
-        //         .doc(FirebaseAuth.instance.currentUser!.uid)
-        //         .snapshots(),
-        //     builder: (context, snapshot) {
-        //       if (snapshot.hasData) {
-        //         var data = {};
-
-        //         if (snapshot.requireData.data() != null) {
-        //           data = snapshot.requireData.data() as Map<String, dynamic>;
-        //         }
-        //         List<String> list = [];
-
-        //         return StatefulBuilder(builder: (context, setState) {
-        //           if (data[DateFormat("MM_yyyy").format(_focusedDay)] != null) {
-        //             list = (data[DateFormat("MM_yyyy").format(_focusedDay)]
-        //                     as List<dynamic>)
-        //                 .map((e) => e.toString())
-        //                 .toList();
-        //           }
-
-        //           return FutureBuilder(
-        //               future: SpendingFirebase.getSpendingList(list),
-        //               builder: (context, futureSnapshot) {
-        //                 if (futureSnapshot.hasData) {
-        //                   var dataSpending = futureSnapshot.requireData;
-
-        //                   if (isSameMonth(_focusedDay, _selectedDay)) {
-        //                     List<Spending> spendingList = dataSpending
-        //                         .where((element) =>
-        //                             isSameDay(element.dateTime, _selectedDay))
-        //                         .toList();
-        //                     _currentSpendingList = spendingList;
-        //                   }
-
-        //                   return Column(
-        //                     children: [
-        //                       CustomTableCalendar(
-        //                           focusedDay: _focusedDay,
-        //                           selectedDay: _selectedDay,
-        //                           dataSpending: dataSpending,
-        //                           onPageChanged: (focusedDay) =>
-        //                               setState(() => _focusedDay = focusedDay),
-        //                           onDaySelected: (selectedDay, focusedDay) {
-        //                             setState(() {
-        //                               _focusedDay = focusedDay;
-        //                               _selectedDay = selectedDay;
-        //                             });
-        //                           }),
-        //                       const SizedBox(height: 5),
-        //                       Expanded(
-        //                         child: SingleChildScrollView(
-        //                           child: Column(
-        //                             children: [
-        //                               if (_currentSpendingList!.isNotEmpty)
-        //                                 TotalSpending(
-        //                                     list: _currentSpendingList),
-        //                               BuildSpending(
-        //                                 spendingList: _currentSpendingList,
-        //                                 date: _selectedDay,
-        //                                 change: (spending) async {
-        //                                   try {
-        //                                     spending.image = await FirebaseStorage
-        //                                         .instance
-        //                                         .ref()
-        //                                         .child(
-        //                                             "spending/${spending.id}.png")
-        //                                         .getDownloadURL();
-        //                                   } catch (_) {}
-
-        //                                   setState(() {
-        //                                     if (isSameDay(spending.dateTime,
-        //                                         _selectedDay)) {
-        //                                       _currentSpendingList![findIndex(
-        //                                           _currentSpendingList!,
-        //                                           spending.id!)] = spending;
-        //                                     } else {
-        //                                       _currentSpendingList!.removeWhere(
-        //                                           (element) =>
-        //                                               element.id!.compareTo(
-        //                                                   spending.id!) ==
-        //                                               0);
-        //                                     }
-        //                                   });
-        //                                 },
-        //                               )
-        //                             ],
-        //                           ),
-        //                         ),
-        //                       ),
-        //                     ],
-        //                   );
-        //                 }
-        //                 return loadingData();
-        //               });
-        //         });
-        //       }
-        //       return loadingData();
-        //     }),
       ),
     );
   }
@@ -137,11 +49,40 @@ class _CalendarPageState extends State<CalendarPage> {
     return Column(
       children: [
         CustomTableCalendar(
-          focusedDay: _focusedDay,
-          selectedDay: _selectedDay,
+            focusedDay: _focusedDay,
+            selectedDay: _selectedDay,
+            onPageChanged: (focusedDay) =>
+                setState(() => _focusedDay = focusedDay),
+            onDaySelected: (selectedDay, focusedDay) async {
+              _currentSpendingList =
+                  await SpendingRepository().getAllSpendingsByDate(
+                userID,
+                focusedDay.day,
+                focusedDay.month,
+                focusedDay.year,
+              );
+              if (mounted) {
+                setState(() {
+                  _focusedDay = focusedDay;
+                  _selectedDay = selectedDay;
+                });
+              }
+            }),
+        TotalSpending(
+          list: _currentSpendingList,
         ),
-        const TotalSpending(),
-        const Expanded(child: BuildSpending())
+        Expanded(
+          child: BuildSpending(
+            spendingList: _currentSpendingList,
+            date: _focusedDay,
+            onDeleted: (id) {
+              _currentSpendingList!
+                  .removeWhere((spending) => spending.id == id);
+
+              setState(() {});
+            },
+          ),
+        )
       ],
     );
   }

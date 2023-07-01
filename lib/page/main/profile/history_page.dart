@@ -46,7 +46,7 @@ class HistoryPage extends StatelessWidget {
                 if (snapshot.hasData) {
                   List<Spending> listSpending = snapshot.requireData;
                   listSpending.sort(
-                      (a, b) => b.dateTime.difference(a.dateTime).inSeconds);
+                      (a, b) => DateTime.parse(b.timeSpend!).difference(DateTime.parse(a.timeSpend!)).inSeconds);
 
                   return ItemSpendingDay(spendingList: listSpending);
                 }

@@ -1,86 +1,59 @@
 import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expenditure_management/models/spending.dart';
-import 'package:expenditure_management/models/user.dart' as myuser;
+import 'package:expenditure_management/models/summary.dart';
+import 'package:expenditure_management/repository/spending_repository.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SummarySpending extends StatefulWidget {
-  const SummarySpending({Key? key, this.spendingList}) : super(key: key);
-  final List<Spending>? spendingList;
+  final int walletId;
+  final int userID;
+  final int month;
+  final int year;
+  const SummarySpending({
+    Key? key,
+    required this.walletId,
+    required this.userID,
+    required this.month,
+    required this.year,
+  }) : super(key: key);
 
   @override
   State<SummarySpending> createState() => _SummarySpendingState();
 }
 
 class _SummarySpendingState extends State<SummarySpending> {
-  final numberFormat = NumberFormat.currency(locale: "vi_VI");
+  Summary? summary;
 
-  Future initWallet({Map<String, dynamic>? data}) async {
-    FirebaseFirestore.instance
-        .collection("info")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) {
-      myuser.User user = myuser.User(
-        email: 'maiphamquochung@gmail.com',
-        password: 'Teoem2411',
-        name: 'Tommy Hung',
-        birthday: '24/11/2002',
-      );
-      var walletData = data ?? {};
-      walletData
-          .addAll({DateFormat("MM_yyyy").format(DateTime.now()): user.money});
-
-      FirebaseFirestore.instance
-          .collection("wallet")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set(walletData);
-    });
+  @override
+  void initState() {
+    super.initState();
+    getSummary();
   }
+
+  void getSummary() async {
+    summary = await SpendingRepository().getSummary(
+      widget.userID,
+      widget.month,
+      widget.year,
+      widget.walletId,
+    );
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  final numberFormat = NumberFormat.currency(locale: "vi_VI");
 
   @override
   Widget build(BuildContext context) {
-    // return widget.spendingList != null
-    //     ? StreamBuilder(
-    //         stream: FirebaseFirestore.instance
-    //             .collection("wallet")
-    //             .doc(FirebaseAuth.instance.currentUser!.uid)
-    //             .snapshots(),
-    //         builder: (context, snapshot) {
-    //           if (snapshot.hasData) {
-    //             if (snapshot.requireData.data() != null) {
-    //               var data = snapshot.requireData.data();
-    //               var wallet =
-    //                   data![DateFormat("MM_yyyy").format(DateTime.now())];
-    //               int sum = 0;
-    //               if (widget.spendingList!.isNotEmpty) {
-    //                 sum = widget.spendingList!
-    //                     .map((e) => e.money)
-    //                     .reduce((value, element) => value + element);
-    //               }
-    //               if (wallet != null) {
-    //                 return body(wallet, sum);
-    //               } else {
-    //                 initWallet(data: data);
-    //                 return loadingSummary();
-    //               }
-    //             } else {
-    //               initWallet();
-    //               return loadingSummary();
-    //             }
-    //           }
-    //           return loadingSummary();
-    //         })
-    //     : loadingSummary();
-    return widget.spendingList != null ? Container() : loadingSummary();
+    return summary == null ? loadingSummary() : body();
   }
 
-  Widget body(var wallet, var sum) {
+  Widget body() {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Card(
@@ -103,7 +76,7 @@ class _SummarySpendingState extends State<SummarySpending> {
                   ),
                   const Spacer(),
                   Text(
-                    numberFormat.format(wallet),
+                    numberFormat.format(summary!.firstBalance),
                     style: const TextStyle(fontSize: 18),
                   )
                 ],
@@ -117,7 +90,7 @@ class _SummarySpendingState extends State<SummarySpending> {
                   ),
                   const Spacer(),
                   Text(
-                    numberFormat.format(wallet + sum),
+                    numberFormat.format(summary!.lastBalance),
                     style: const TextStyle(fontSize: 18),
                   )
                 ],
@@ -132,7 +105,7 @@ class _SummarySpendingState extends State<SummarySpending> {
                 children: [
                   const Spacer(),
                   Text(
-                    "${sum > 0 ? "+" : ""}${numberFormat.format(sum)}",
+                    numberFormat.format(summary!.spended),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

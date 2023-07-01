@@ -5,11 +5,10 @@ class SpendingType {
   int? id;
   final String image;
   final String name;
-  SpendingType({
-    this.id,
-    required this.image,
-    required this.name,
-  });
+  int type;
+
+  SpendingType(
+      {this.id, required this.image, required this.name, required this.type});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -24,6 +23,7 @@ class SpendingType {
       id: map['id'] != null ? map['id'] as int : null,
       image: map['image'] as String,
       name: map['name'] as String,
+      type: map['type'] as int,
     );
   }
 

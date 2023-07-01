@@ -1,5 +1,6 @@
 import 'package:expenditure_management/constants/function/route_function.dart';
 import 'package:expenditure_management/constants/list.dart';
+import 'package:expenditure_management/main.dart';
 import 'package:expenditure_management/models/spending.dart';
 import 'package:expenditure_management/page/main/home/widget/item_spending_widget.dart';
 import 'package:expenditure_management/page/view_spending/view_spending_page.dart';
@@ -7,20 +8,31 @@ import 'package:expenditure_management/setting/localization/app_localizations.da
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class BuildSpending extends StatelessWidget {
-  const BuildSpending({Key? key, this.spendingList, this.date, this.change})
-      : super(key: key);
+class BuildSpending extends StatefulWidget {
+  const BuildSpending({
+    Key? key,
+    this.spendingList,
+    this.date,
+    this.change,
+    this.onDeleted,
+  }) : super(key: key);
   final List<Spending>? spendingList;
   final DateTime? date;
   final Function(Spending spending)? change;
+  final Function(int id)? onDeleted;
 
   @override
+  State<BuildSpending> createState() => _BuildSpendingState();
+}
+
+class _BuildSpendingState extends State<BuildSpending> {
+  @override
   Widget build(BuildContext context) {
-    return spendingList != null
-        ? (spendingList!.isEmpty
+    return widget.spendingList != null
+        ? (widget.spendingList!.isEmpty
             ? Center(
                 child: Text(
-                  "${AppLocalizations.of(context).translate('you_have_spending_the_day')} ${DateFormat("dd/MM/yyyy").format(date!)}",
+                  "${AppLocalizations.of(context).translate('you_have_spending_the_day')} ${DateFormat("dd/MM/yyyy").format(widget.date!)}",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -29,7 +41,7 @@ class BuildSpending extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               )
-            : showListSpending(spendingList!))
+            : showListSpending(widget.spendingList!))
         : loadingItemSpending();
   }
 
@@ -48,7 +60,12 @@ class BuildSpending extends StatelessWidget {
               screen: ViewSpendingPage(
                 spending: spendingList[index],
                 change: (spending) {
-                  if (change != null) change!(spending);
+                  if (widget.change != null) widget.change!(spending);
+                },
+                delete: (id) {
+                  setState(() {
+                    widget.onDeleted!(id);
+                  });
                 },
               ),
               begin: const Offset(1, 0),
@@ -62,26 +79,24 @@ class BuildSpending extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: Row(
                 children: [
-                  // Image.asset(
-                  //   listType[spendingList[index].type]["image"]!,
-                  //   width: 40,
-                  // ),
+                  Image.network(
+                    spendingList[index].imageType!,
+                    width: 40,
+                  ),
                   const SizedBox(width: 10),
-                  // Container(
-                  //   constraints: const BoxConstraints(maxWidth: 100),
-                  //   child: Text(
-                  //     spendingList[index].type == 41
-                  //         ? spendingList[index].typeName!
-                  //         : AppLocalizations.of(context).translate(
-                  //             listType[spendingList[index].type]["title"]!),
-                  //     overflow: TextOverflow.ellipsis,
-                  //     maxLines: 2,
-                  //     style: const TextStyle(
-                  //       fontSize: 16,
-                  //       fontWeight: FontWeight.bold,
-                  //     ),
-                  //   ),
-                  // ),
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 100),
+                    child: Text(
+                      AppLocalizations.of(context)
+                          .translate(spendingList[index].type!),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: Text(
                       numberFormat.format(spendingList[index].moneySpend),
