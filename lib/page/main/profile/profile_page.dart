@@ -247,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
         return Container(
           padding: const EdgeInsets.only(left: 20),
           width: double.infinity,
-          height: 170,
+          height: 350,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -296,7 +296,76 @@ class _ProfilePageState extends State<ProfilePage> {
                     )
                   ],
                 ),
-              )
+              ),
+              InkWell(
+                onTap: () async {
+                  changeLanguage(2);
+                },
+                child: Row(
+                  children: [
+                    Image.asset("assets/images/english.png", width: 70),
+                    const Spacer(),
+                    const Text(
+                      "Русский",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Radio(
+                      value: 2,
+                      groupValue: language,
+                      onChanged: (value) {
+                        changeLanguage(2);
+                      },
+                    )
+                  ],
+                ),
+              ),
+              InkWell(
+                onTap: () async {
+                  changeLanguage(3);
+                },
+                child: Row(
+                  children: [
+                    Image.asset("assets/images/english.png", width: 70),
+                    const Spacer(),
+                    const Text(
+                      "nhat",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Radio(
+                      value: 2,
+                      groupValue: language,
+                      onChanged: (value) {
+                        changeLanguage(3);
+                      },
+                    )
+                  ],
+                ),
+              ),
+              InkWell(
+                onTap: () async {
+                  changeLanguage(4);
+                },
+                child: Row(
+                  children: [
+                    Image.asset("assets/images/english.png", width: 70),
+                    const Spacer(),
+                    const Text(
+                      "nga",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Radio(
+                      value: 2,
+                      groupValue: language,
+                      onChanged: (value) {
+                        changeLanguage(4);
+                      },
+                    )
+                  ],
+                ),
+              ),
             ],
           ),
         );
@@ -308,9 +377,16 @@ class _ProfilePageState extends State<ProfilePage> {
     if (lang != language) {
       if (lang == 0) {
         BlocProvider.of<SettingCubit>(context).toVietnamese();
-      } else {
+      } else if (lang == 1) {
         BlocProvider.of<SettingCubit>(context).toEnglish();
+      } else if (lang == 2) {
+        BlocProvider.of<SettingCubit>(context).toRussian();
+      } else if (lang == 3) {
+        BlocProvider.of<SettingCubit>(context).toKorea();
+      } else if (lang == 4) {
+        BlocProvider.of<SettingCubit>(context).toRussian();
       }
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('language', lang);
       if (!mounted) return;
