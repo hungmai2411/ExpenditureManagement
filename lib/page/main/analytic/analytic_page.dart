@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expenditure_management/constants/function/get_data_spending.dart';
 import 'package:expenditure_management/constants/function/get_date.dart';
@@ -14,6 +16,7 @@ import 'package:expenditure_management/page/main/analytic/widget/tabbar_chart.da
 import 'package:expenditure_management/page/main/analytic/widget/tabbar_type.dart';
 import 'package:expenditure_management/page/main/analytic/widget/total_report.dart';
 import 'package:expenditure_management/page/main/calendar/widget/custom_table_calendar.dart';
+import 'package:expenditure_management/repository/spending_repository.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +38,7 @@ class _AnalyticPageState extends State<AnalyticPage>
   bool chart = false;
   DateTime now = DateTime.now();
   String date = "";
+  List<Spending>? classifySpending;
 
   @override
   void initState() {
@@ -64,7 +68,25 @@ class _AnalyticPageState extends State<AnalyticPage>
       });
     });
     _typeController.addListener(() => setState(() {}));
+
+    getSpending(date);
     super.initState();
+  }
+
+  Future<void> getSpending(String date) async {
+    List<String> period = date.split('-');
+    String fromDate = period[0].trim();
+    String endDate = period[1].trim();
+
+    classifySpending = await SpendingRepository().getSpendingsByPeriod(
+      6,
+      fromDate,
+      endDate,
+      'spending',
+    );
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -229,7 +251,26 @@ class _AnalyticPageState extends State<AnalyticPage>
 
     //       return loading();
     //     });
-    return loading();
+    return classifySpending == null
+        ? loading()
+        : SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  showChart(classifySpending!),
+                  if (classifySpending!.isNotEmpty)
+                    TotalReport(list: classifySpending!),
+                  if (classifySpending!.isNotEmpty)
+                    (chart
+                        ? showListSpendingPie(list: classifySpending!)
+                        : ShowListSpendingColumn(
+                            spendingList: classifySpending!,
+                            index: _tabController.index))
+                ],
+              ),
+            ),
+          );
   }
 
   Widget showChart(List<Spending> classifySpending) {
@@ -243,7 +284,9 @@ class _AnalyticPageState extends State<AnalyticPage>
             date: date,
             index: _tabController.index,
             now: now,
-            action: (date, now) {
+            action: (date, now) async {
+              await getSpending(date);
+
               setState(() {
                 this.date = date;
                 this.now = now;
