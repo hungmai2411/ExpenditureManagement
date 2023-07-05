@@ -47,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
     SharedPreferences.getInstance().then((value) {
       setState(() {
         language = value.getInt('language') ??
-            (Platform.localeName.split('_')[0] == "vi" ? 0 : 1);
+            (Platform.localeName.split('_')[0] == "vi" ? 1 : 2);
         //language = 1; //default is english
         darkMode = value.getBool("isDark") ?? false;
         loginMethod = value.getBool("login") ?? false;
@@ -248,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
         return Container(
           padding: const EdgeInsets.only(left: 20),
           width: double.infinity,
-          height: 350,
+          height: 323,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -298,6 +298,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
+              SizedBox(height: 6),
               InkWell(
                 onTap: () async {
                   changeLanguage(2);
@@ -321,6 +322,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
+              SizedBox(height: 16),
               InkWell(
                 onTap: () async {
                   changeLanguage(3);
@@ -344,6 +346,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
+              SizedBox(height: 16),
               InkWell(
                 onTap: () async {
                   changeLanguage(4);

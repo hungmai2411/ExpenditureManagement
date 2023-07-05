@@ -32,5 +32,7 @@ class AppLocalizations {
     return value is String ? value : '';
   }
 
-  bool get isEnLocale => locale.languageCode == 'en';
+  /*bool get isEnLocale => locale.languageCode == 'en';*/
+  // default language
+  bool get isEnLocale => locale.languageCode == 'vi';
 }
