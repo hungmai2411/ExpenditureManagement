@@ -48,6 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         language = value.getInt('language') ??
             (Platform.localeName.split('_')[0] == "vi" ? 0 : 1);
+        //language = 1; //default is english
         darkMode = value.getBool("isDark") ?? false;
         loginMethod = value.getBool("login") ?? false;
       });
@@ -303,7 +304,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 child: Row(
                   children: [
-                    Image.asset("assets/images/english.png", width: 70),
+                    Image.asset("assets/images/russia.png", width: 70),
                     const Spacer(),
                     const Text(
                       "Русский",
@@ -326,10 +327,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 child: Row(
                   children: [
-                    Image.asset("assets/images/english.png", width: 70),
+                    Image.asset("assets/images/japan.png", width: 70),
                     const Spacer(),
                     const Text(
-                      "nhat",
+                      "日本",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -349,10 +350,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 child: Row(
                   children: [
-                    Image.asset("assets/images/english.png", width: 70),
+                    Image.asset("assets/images/korea.png", width: 70),
                     const Spacer(),
                     const Text(
-                      "nga",
+                      "한국인",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -384,7 +385,9 @@ class _ProfilePageState extends State<ProfilePage> {
       } else if (lang == 3) {
         BlocProvider.of<SettingCubit>(context).toKorea();
       } else if (lang == 4) {
-        BlocProvider.of<SettingCubit>(context).toRussian();
+        BlocProvider.of<SettingCubit>(context).toJapanese();
+      } else {
+        BlocProvider.of<SettingCubit>(context).toVietnamese();
       }
 
       final prefs = await SharedPreferences.getInstance();
