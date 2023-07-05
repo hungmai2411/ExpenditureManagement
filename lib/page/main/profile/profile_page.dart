@@ -334,7 +334,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Radio(
-                      value: 2,
+                      value: 3,
                       groupValue: language,
                       onChanged: (value) {
                         changeLanguage(3);
@@ -357,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Radio(
-                      value: 2,
+                      value: 4,
                       groupValue: language,
                       onChanged: (value) {
                         changeLanguage(4);
