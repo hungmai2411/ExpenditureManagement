@@ -16,6 +16,8 @@ class SpendingRepository {
   String getAllSpendingByMonth = 'spends/by-month';
   String deleteSpendingURL = 'spends/delete';
   String getSpendingByDateURL = 'spends/by-month';
+  String getSpendingByPeriodURL = 'spends/period';
+
   SpendingRepository() {
     loginURL = url + loginURL;
     registerURL = url + registerURL;
@@ -25,6 +27,7 @@ class SpendingRepository {
     getSpendingByDateURL = url + getSpendingByDateURL;
     getAllSpendingByMonth = url + getAllSpendingByMonth;
     deleteSpendingURL = url + deleteSpendingURL;
+    getSpendingByPeriodURL = url + getSpendingByPeriodURL;
   }
 
   Future<void> createSpending(Spending spending) async {
@@ -94,6 +97,29 @@ class SpendingRepository {
         },
       );
       for (var map in jsonDecode(response.body)['data']['spendIndates']) {
+        Spending spending = Spending.fromMap(map);
+        spendings.add(spending);
+      }
+      log('response:$response');
+    } catch (e) {
+      log('get all spendings: $e');
+    }
+    return spendings;
+  }
+
+  Future<List<Spending>> getSpendingsByPeriod(
+      int userID, String fromDate, String toDate, String type) async {
+    List<Spending> spendings = [];
+    try {
+      final response = await http.get(
+        Uri.parse(
+            '$getSpendingByPeriodURL/$userID?fromDate=$fromDate&toDate=$toDate&type=$type'),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+      );
+      for (var map in jsonDecode(response.body)['data']) {
         Spending spending = Spending.fromMap(map);
         spendings.add(spending);
       }
