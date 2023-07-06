@@ -26,7 +26,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             value.setBool("newUser", isNewUser);
           });
         }
-
         SharedPreferences.getInstance().then((value) {
           value.setBool("login", true);
         });

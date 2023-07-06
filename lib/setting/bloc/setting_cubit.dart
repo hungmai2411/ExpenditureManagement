@@ -16,9 +16,23 @@ class SettingCubit extends Cubit<SettingState> {
         );
 
   static Locale _getLocal(int? lang) {
-    return lang == null
-        ? Locale(Platform.localeName.split('_')[0] == "vi" ? "vi" : "en")
-        : (lang == 0 ? const Locale('vi') : const Locale('en'));
+    if (lang == null) {
+      String defaultLocale = Platform.localeName.split('_')[0];
+      switch (defaultLocale) {
+        case 'vi':
+          return const Locale('vi');
+        case 'ru':
+          return const Locale('ru');
+        case 'ko':
+          return const Locale('ko');
+        case 'ja':
+          return const Locale('ja');
+        default:
+          return const Locale('en');
+      }
+    } else {
+      return lang == 0 ? const Locale('en') : const Locale('vi');
+    }
   }
 
   void toVietnamese() {
@@ -35,5 +49,20 @@ class SettingCubit extends Cubit<SettingState> {
     Locale locale = _getLocal(language);
     isDark = !isDark;
     emit(SettingChange(locale, isDark));
+  }
+
+  void toRussian() {
+    language = 2;
+    emit(SettingChange(const Locale('ru'), isDark));
+  }
+
+  void toKorea() {
+    language = 3;
+    emit(SettingChange(const Locale('ko'), isDark));
+  }
+
+  void toJapanese() {
+    language = 4;
+    emit(SettingChange(const Locale('ja'), isDark));
   }
 }
