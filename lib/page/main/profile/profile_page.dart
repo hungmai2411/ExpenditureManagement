@@ -117,6 +117,15 @@ class _ProfilePageState extends State<ProfilePage> {
                         color: const Color.fromRGBO(218, 165, 32, 1),
                       ),
                       const SizedBox(height: 20),
+                      //wallet
+                      // settingItem(
+                      //   text: AppLocalizations.of(context)
+                      //       .translate('wallet_setting'),
+                      //   action: _showBottomSheetWallet,
+                      //   icon: Icons.wallet_outlined,
+                      //   color: const Color.fromRGBO(218, 165, 32, 1),
+                      // ),
+                      // const SizedBox(height: 20),
                       Row(
                         children: [
                           Container(
@@ -310,7 +319,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 child: Row(
                   children: [
-                    Image.asset("assets/images/korea.png", width: 70),
+                    Image.asset("assets/images/ru.png", width: 70),
                     const Spacer(),
                     const Text(
                       "Русский",
@@ -368,6 +377,52 @@ class _ProfilePageState extends State<ProfilePage> {
                       groupValue: language,
                       onChanged: (value) {
                         changeLanguage(4);
+                      },
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showBottomSheetWallet() {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      ),
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.only(left: 20),
+          width: double.infinity,
+          //height: 323,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () async {
+                  changeLanguage(0);
+                },
+                child: Row(
+                  children: [
+                    Image.asset("assets/images/vietnam.png", width: 70),
+                    const Spacer(),
+                    const Text(
+                      "Tiếng Việt",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Radio(
+                      value: 0,
+                      groupValue: language,
+                      onChanged: (value) {
+                        changeLanguage(0);
                       },
                     )
                   ],
