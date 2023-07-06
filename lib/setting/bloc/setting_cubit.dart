@@ -31,7 +31,7 @@ class SettingCubit extends Cubit<SettingState> {
           return const Locale('en');
       }
     } else {
-      return lang == 0 ? const Locale('vi') : const Locale('en');
+      return lang == 0 ? const Locale('en') : const Locale('vi');
     }
   }
 

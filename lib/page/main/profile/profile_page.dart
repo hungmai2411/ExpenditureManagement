@@ -14,6 +14,7 @@ import 'package:expenditure_management/page/main/profile/edit_profile_page.dart'
 import 'package:expenditure_management/page/main/profile/history_page.dart';
 import 'package:expenditure_management/page/main/profile/widget/info_widget.dart';
 import 'package:expenditure_management/page/main/profile/widget/setting_item.dart';
+import 'package:expenditure_management/repository/spending_repository.dart';
 import 'package:expenditure_management/setting/bloc/setting_cubit.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -405,7 +406,32 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future exportCSV() async {
     List<Spending> spendingList = [];
-    await FirebaseFirestore.instance
+    List<DateTime> months = [];
+    bool isLoading = true;
+    @override
+    void initState() {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    int userID = prefs.getInt('userID') ?? -1;
+
+    Future<void> getAllSpendings(int index) async {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
+    DateTime now = DateTime(DateTime.now().year, DateTime.now().month);
+
+    months = [DateTime(now.year, now.month + 1), now];
+//dang xem code o day
+    /*spendingList = await SpendingRepository().getAllSpendingsByMonth(
+        userID, months[index].month, months[index].year);*/
+
+    /*await FirebaseFirestore.instance
         .collection("data")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
@@ -418,15 +444,16 @@ class _ProfilePageState extends State<ProfilePage> {
       }
 
       for (var item in listData) {
-        // await FirebaseFirestore.instance
-        //     .collection("spending")
-        //     .doc(item)
-        //     .get()
-        //     .then((value) {
-        //   //spendingList.add(Spending.fromFirebase(value));
-        // });
+        await FirebaseFirestore.instance
+            .collection("spending")
+            .doc(item)
+            .get()
+            .then((value) {
+          //spendingList.add(Spending.fromFirebase(value));
+        });
       }
-    });
+      
+    });*/
     List<List<dynamic>> rows = [];
 
     List<dynamic> row = [
