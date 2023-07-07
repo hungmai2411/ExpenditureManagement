@@ -1,4 +1,5 @@
 import 'package:expenditure_management/models/user.dart';
+import 'package:expenditure_management/models/token.dart';
 import 'package:expenditure_management/repository/auth_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -13,8 +14,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginBloc(this._authRepository) : super(InitState()) {
     on<LoginWithEmailPasswordEvent>((event, emit) async {
-      User? user = await _authRepository.login(event.email, event.password);
-      if (user != null) {
+      Token? token = await _authRepository.login(event.email, event.password);
+      if (token != null) {
         final prefs = await SharedPreferences.getInstance();
         bool? newUser = prefs.getBool('newUser');
 
@@ -22,21 +23,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           isNewUser = false;
         } else {
           isNewUser = true;
-          SharedPreferences.getInstance().then((value) {
-            value.setBool("newUser", isNewUser);
-          });
+          await prefs.setBool("newUser", isNewUser);
         }
-        SharedPreferences.getInstance().then((value) {
-          value.setBool("login", true);
-        });
-        SharedPreferences.getInstance().then((value) {
-          value.setInt("userID", user.id!);
-        });
+        await prefs.setBool("login", true);
+        await prefs.setString("accessToken", token.accessToken);
+        String? accessToken = prefs.getString('accessToken');
 
-        emit(LoginSuccessState(
-          social: Social.email,
-          isNewUser: isNewUser,
-        ));
+        if (accessToken != null) {
+          await _authRepository.verifyAccessToken(accessToken);
+          emit(LoginSuccessState(
+            social: Social.email,
+            isNewUser: isNewUser,
+          ));
+        } else {
+          emit(LoginErrorState(status: 'Authentication failed'));
+        }
       } else {
         emit(LoginErrorState(status: 'Authentication failed'));
       }

@@ -6,6 +6,7 @@ import 'package:expenditure_management/models/spending.dart';
 import 'package:expenditure_management/models/summary.dart' as s;
 import 'package:expenditure_management/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SpendingRepository {
   String loginURL = 'auth/login';
@@ -88,12 +89,14 @@ class SpendingRepository {
       int userID, int day, int month, int year) async {
     List<Spending> spendings = [];
     try {
+      final prefs = await SharedPreferences.getInstance();
+      String? accessToken = prefs.getString("accessToken");
       final response = await http.get(
-        Uri.parse(
-            '$getAllSpendingURL/$userID?day=$day&month=$month&year=$year'),
+        Uri.parse('$getAllSpendingURL/?day=$day&month=$month&year=$year'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       for (var map in jsonDecode(response.body)['data']['spendIndates']) {
@@ -111,12 +114,15 @@ class SpendingRepository {
       int userID, String fromDate, String toDate, String type) async {
     List<Spending> spendings = [];
     try {
+      final prefs = await SharedPreferences.getInstance();
+      String? accessToken = prefs.getString("accessToken");
       final response = await http.get(
         Uri.parse(
-            '$getSpendingByPeriodURL/$userID?fromDate=$fromDate&toDate=$toDate&type=$type'),
+            '$getSpendingByPeriodURL/?fromDate=$fromDate&toDate=$toDate&type=$type'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       for (var map in jsonDecode(response.body)['data']) {
@@ -134,11 +140,14 @@ class SpendingRepository {
       int userID, int month, int year) async {
     List<Spending> spendings = [];
     try {
+      final prefs = await SharedPreferences.getInstance();
+      String? accessToken = prefs.getString("accessToken");
       final response = await http.get(
-        Uri.parse('$getAllSpendingByMonth/$userID?month=$month&year=$year'),
+        Uri.parse('$getAllSpendingByMonth/?month=$month&year=$year'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       for (var map in jsonDecode(response.body)['data']) {
@@ -147,6 +156,7 @@ class SpendingRepository {
       }
       log('response:$response');
     } catch (e) {
+      print("error:$e");
       log('get all spendings: $e');
     }
     return spendings;

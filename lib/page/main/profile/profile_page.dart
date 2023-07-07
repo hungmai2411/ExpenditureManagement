@@ -217,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               value.setBool("login", false);
                             });
                             SharedPreferences.getInstance().then((value) {
-                              value.setInt("userID", -1);
+                              value.setString("accessToken", "");
                             });
                             // await FirebaseAuth.instance.signOut();
                             // await GoogleSignIn().signOut();
