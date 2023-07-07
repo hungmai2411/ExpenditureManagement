@@ -40,7 +40,7 @@ class AuthRepository {
     return null;
   }
 
-  Future<String?> register(User user) async {
+  Future<Token?> register(User user) async {
     try {
       final response = await http.post(
         Uri.parse(registerURL),
@@ -51,8 +51,7 @@ class AuthRepository {
         },
       );
       log('response:$response');
-      String result = jsonDecode(response.body)['message'];
-      return result;
+      return Token.fromMap(jsonDecode(response.body)['data']);
     } catch (e) {
       log('error register: $e');
     }
