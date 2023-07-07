@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:expenditure_management/constants/app_styles.dart';
 import 'package:expenditure_management/constants/function/loading_animation.dart';
 import 'package:expenditure_management/constants/function/pick_function.dart';
@@ -295,6 +296,19 @@ class _AddSpendingPageState extends State<AddSpendingPage> {
   }
 
   Future addingSpending() async {
+    CloudinaryResponse? response;
+    if (image != null) {
+      final cloudinary =
+          CloudinaryPublic('dns3ruxri', 'cemj3klu', cache: false);
+      response = await cloudinary.uploadFile(
+        CloudinaryFile.fromFile(
+          image!.path,
+          folder: 'image_spending',
+          resourceType: CloudinaryResourceType.Image,
+        ),
+      );
+    }
+
     String moneyString = _money.text.replaceAll(RegExp(r'[^0-9]'), '');
     if (type != null &&
         moneyString.isNotEmpty &&
@@ -317,9 +331,9 @@ class _AddSpendingPageState extends State<AddSpendingPage> {
           selectedTime.minute,
         ).toUtc().toIso8601String(),
         note: _note.text.trim(),
-        image: image != null ? image!.path : null,
+        image: response?.secureUrl,
         location: _location.text.trim(),
-        listFriendId: [],
+        friends: friends,
       );
       loadingAnimation(context);
       await SpendingRepository().createSpending(spending);

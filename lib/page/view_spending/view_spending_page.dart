@@ -43,10 +43,10 @@ class _ViewSpendingPageState extends State<ViewSpendingPage> {
 
   @override
   void initState() {
-    // for (var _ in widget.spending.friends!) {
-    //   colors.add(Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
-    //       Random().nextInt(255), 1));
-    // }
+    for (var _ in widget.spending.friends!) {
+      colors.add(Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
+          Random().nextInt(255), 1));
+    }
     spending = widget.spending;
     super.initState();
   }
@@ -220,18 +220,18 @@ class _ViewSpendingPageState extends State<ViewSpendingPage> {
                       )
                     ],
                   ),
-                // if (spending.friends != null && spending.friends!.isNotEmpty)
-                //   ListView(
-                //     shrinkWrap: true,
-                //     physics: const NeverScrollableScrollPhysics(),
-                //     children: [
-                //       const SizedBox(height: 5),
-                //       addFriend(),
-                //       const SizedBox(height: 5),
-                //     ],
-                //   ),
-                // if (spending.friends != null && spending.friends!.isNotEmpty)
-                //   const SizedBox(height: 10),
+                if (spending.friends != null && spending.friends!.isNotEmpty)
+                  ListView(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      const SizedBox(height: 5),
+                      addFriend(),
+                      const SizedBox(height: 5),
+                    ],
+                  ),
+                if (spending.friends != null && spending.friends!.isNotEmpty)
+                  const SizedBox(height: 10),
                 if (spending.image != null)
                   InkWell(
                     onTap: () {
@@ -281,39 +281,39 @@ class _ViewSpendingPageState extends State<ViewSpendingPage> {
           ),
         ),
         const SizedBox(width: 10),
-        // if (spending.friends!.isNotEmpty)
-        //   Expanded(
-        //     child: Wrap(
-        //       runSpacing: 5,
-        //       spacing: 2,
-        //       children: List.generate(spending.friends!.length, (index) {
-        //         return Padding(
-        //           padding: const EdgeInsets.symmetric(horizontal: 5),
-        //           child: Container(
-        //             padding: const EdgeInsets.only(right: 10),
-        //             decoration: BoxDecoration(
-        //               color: Colors.grey.withOpacity(0.7),
-        //               borderRadius: BorderRadius.circular(90),
-        //             ),
-        //             child: Row(
-        //               mainAxisSize: MainAxisSize.min,
-        //               children: [
-        //                 circleText(
-        //                   text: spending.friends![index][0],
-        //                   color: colors[index],
-        //                 ),
-        //                 const SizedBox(width: 10),
-        //                 Text(
-        //                   spending.friends![index],
-        //                   style: const TextStyle(fontSize: 16),
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //         );
-        //       }),
-        //     ),
-        //   )
+        if (spending.friends!.isNotEmpty)
+          Expanded(
+            child: Wrap(
+              runSpacing: 5,
+              spacing: 2,
+              children: List.generate(spending.friends!.length, (index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Container(
+                    padding: const EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(90),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        circleText(
+                          text: spending.friends![index][0],
+                          color: colors[index],
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          spending.friends![index],
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+          )
       ],
     );
   }

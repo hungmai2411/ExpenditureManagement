@@ -11,25 +11,26 @@ class SpendingRepository {
   String loginURL = 'auth/login';
   String registerURL = 'auth/register';
   String createSpendingURL = 'spends/create';
-  String getAllSpendingURL = 'spends/by-date';
+  String getAllSpendingByDateURL = 'spends/by-date';
   String getSummaryURL = 'balances/by-month';
   String getAllSpendingByMonth = 'spends/by-month';
   String deleteSpendingURL = 'spends/delete';
   String getSpendingByDateURL = 'spends/by-month';
   String getSpendingByPeriodURL = 'spends/period';
+  String getAllSpendingURL = 'spends/all-of-user';
 
   SpendingRepository() {
     loginURL = url + loginURL;
     registerURL = url + registerURL;
     createSpendingURL = url + createSpendingURL;
-    getAllSpendingURL = url + getAllSpendingURL;
+    getAllSpendingByDateURL = url + getAllSpendingByDateURL;
     getSummaryURL = url + getSummaryURL;
     getSpendingByDateURL = url + getSpendingByDateURL;
     getAllSpendingByMonth = url + getAllSpendingByMonth;
     deleteSpendingURL = url + deleteSpendingURL;
     getSpendingByPeriodURL = url + getSpendingByPeriodURL;
+    getAllSpendingURL = url + getAllSpendingURL;
   }
-
   Future<void> createSpending(Spending spending) async {
     try {
       final response = await http.post(
@@ -46,7 +47,6 @@ class SpendingRepository {
     }
   }
 
-//https://spendingmanagementserver-production.up.railway.app/spends/delete/25
   Future<void> deleteSpending(Spending spending) async {
     try {
       final response = await http.delete(
@@ -82,6 +82,27 @@ class SpendingRepository {
     return null;
   }
 
+  Future<List<Spending>> getAllSpendings(int userID) async {
+    List<Spending> spendings = [];
+    try {
+      final response = await http.get(
+        Uri.parse('$getAllSpendingURL/$userID'),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+      );
+      for (var map in jsonDecode(response.body)['data']) {
+        Spending spending = Spending.fromMap(map);
+        spendings.add(spending);
+      }
+      log('response:$response');
+    } catch (e) {
+      log('get all spendings: $e');
+    }
+    return spendings;
+  }
+
 // https://spendingmanagementserver-production.up.railway.app/spends/by-date/6?date=2023-06-27T23:46:51.367610
 // month=6&year=2023
   Future<List<Spending>> getAllSpendingsByDate(
@@ -90,7 +111,7 @@ class SpendingRepository {
     try {
       final response = await http.get(
         Uri.parse(
-            '$getAllSpendingURL/$userID?day=$day&month=$month&year=$year'),
+            '$getAllSpendingByDateURL/$userID?day=$day&month=$month&year=$year'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',

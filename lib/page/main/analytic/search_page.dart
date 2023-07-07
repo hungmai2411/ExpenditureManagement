@@ -81,7 +81,7 @@ class _SearchPageState extends State<SearchPage> {
 
     if (filter.friends!.isNotEmpty) {
       List<String> list = filter.friends!
-          .where((element) => spending.listFriendId!.contains(element))
+          .where((element) => spending.friends!.contains(element))
           .toList();
 
       if (list.isEmpty) return false;

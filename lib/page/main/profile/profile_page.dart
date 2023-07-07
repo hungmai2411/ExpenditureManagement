@@ -14,6 +14,7 @@ import 'package:expenditure_management/page/main/profile/edit_profile_page.dart'
 import 'package:expenditure_management/page/main/profile/history_page.dart';
 import 'package:expenditure_management/page/main/profile/widget/info_widget.dart';
 import 'package:expenditure_management/page/main/profile/widget/setting_item.dart';
+import 'package:expenditure_management/repository/spending_repository.dart';
 import 'package:expenditure_management/setting/bloc/setting_cubit.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -219,6 +220,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             SharedPreferences.getInstance().then((value) {
                               value.setInt("userID", -1);
                             });
+                            SharedPreferences.getInstance().then((value) {
+                              value.setBool("newUser", false);
+                            });
                             // await FirebaseAuth.instance.signOut();
                             // await GoogleSignIn().signOut();
                             // await FacebookAuth.instance.logOut();
@@ -304,13 +308,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
+              const SizedBox(height: 6),
               InkWell(
                 onTap: () async {
                   changeLanguage(2);
                 },
                 child: Row(
                   children: [
-                    Image.asset("assets/images/korea.png", width: 70),
+                    Image.asset("assets/images/russia.png", width: 70),
                     const Spacer(),
                     const Text(
                       "Русский",
@@ -327,6 +332,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
               InkWell(
                 onTap: () async {
                   changeLanguage(3);
@@ -336,7 +342,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Image.asset("assets/images/japan.png", width: 70),
                     const Spacer(),
                     const Text(
-                      "nhat",
+                      "日本",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -350,16 +356,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
               InkWell(
                 onTap: () async {
                   changeLanguage(4);
                 },
                 child: Row(
                   children: [
-                    Image.asset("assets/images/russia.png", width: 70),
+                    Image.asset("assets/images/korea.png", width: 70),
                     const Spacer(),
                     const Text(
-                      "nga",
+                      "한국인",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -408,28 +415,29 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future exportCSV() async {
     List<Spending> spendingList = [];
-    await FirebaseFirestore.instance
-        .collection("data")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) async {
-      var data = value.data() as Map<String, dynamic>;
-      List<String> listData = [];
-      for (var entry in data.entries) {
-        listData.addAll(
-            (entry.value as List<dynamic>).map((e) => e.toString()).toList());
-      }
+    spendingList = await SpendingRepository().getAllSpendings(6);
+    // await FirebaseFirestore.instance
+    //     .collection("data")
+    //     .doc(FirebaseAuth.instance.currentUser!.uid)
+    //     .get()
+    //     .then((value) async {
+    //   var data = value.data() as Map<String, dynamic>;
+    //   List<String> listData = [];
+    //   for (var entry in data.entries) {
+    //     listData.addAll(
+    //         (entry.value as List<dynamic>).map((e) => e.toString()).toList());
+    //   }
 
-      for (var item in listData) {
-        // await FirebaseFirestore.instance
-        //     .collection("spending")
-        //     .doc(item)
-        //     .get()
-        //     .then((value) {
-        //   //spendingList.add(Spending.fromFirebase(value));
-        // });
-      }
-    });
+    //   for (var item in listData) {
+    //     // await FirebaseFirestore.instance
+    //     //     .collection("spending")
+    //     //     .doc(item)
+    //     //     .get()
+    //     //     .then((value) {
+    //     //   //spendingList.add(Spending.fromFirebase(value));
+    //     // });
+    //   }
+    // });
     List<List<dynamic>> rows = [];
 
     List<dynamic> row = [
@@ -444,18 +452,16 @@ class _ProfilePageState extends State<ProfilePage> {
     rows.add(row);
     for (var item in spendingList) {
       List<dynamic> row = [];
-      // row.add(item.money);
-      // if (!mounted) return;
-      // row.add(item.type == 41
-      //     ? item.typeName
-      //     : AppLocalizations.of(context)
-      //         .translate(listType[item.type]['title']!));
-      // row.add(item.note);
-      // row.add(DateFormat("dd/MM/yyyy - HH:mm:ss").format(item.dateTime));
-      // row.add(item.image);
-      // row.add(item.location);
-      // row.add(item.friends);
-      // rows.add(row);
+      row.add(item.moneySpend);
+      if (!mounted) return;
+      row.add(AppLocalizations.of(context).translate(item.type!));
+      row.add(item.note);
+      row.add(DateFormat("dd/MM/yyyy - HH:mm:ss")
+          .format(DateTime.parse(item.timeSpend!)));
+      row.add(item.image);
+      row.add(item.location);
+      row.add("");
+      rows.add(row);
     }
 
     String csv = const ListToCsvConverter().convert(rows);
@@ -477,6 +483,7 @@ class _ProfilePageState extends State<ProfilePage> {
     f.writeAsString(csv);
 
     if (!mounted) return;
+    print(path);
     Fluttertoast.showToast(
       msg:
           "${AppLocalizations.of(context).translate('file_successfully_saved')} $path",
