@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:expenditure_management/constants/environment.dart';
 import 'package:expenditure_management/models/type.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class TypeRepository {
@@ -12,14 +13,21 @@ class TypeRepository {
     getAllTypeURL = url + getAllTypeURL;
   }
 
+  Future<String?> getAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
+
   Future<List<SpendingType>> getAllTypes() async {
     List<SpendingType> types = [];
     try {
+      final accessToken = await getAccessToken();
       final response = await http.get(
         Uri.parse(getAllTypeURL),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       for (var map in jsonDecode(response.body)['data']) {

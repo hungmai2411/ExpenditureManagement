@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:expenditure_management/constants/environment.dart';
 import 'package:expenditure_management/models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:http/http.dart' as http;
 
 class WalletRepository {
@@ -16,19 +18,25 @@ class WalletRepository {
     creatFirstWalletURL = url + creatFirstWalletURL;
   }
 
+  Future<String?> getAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
+
   Future<void> createFirstWallet(
       int userId, String currenyUnit, int money) async {
     try {
+      final accessToken = await getAccessToken();
       final response = await http.post(
         Uri.parse(creatFirstWalletURL),
         body: jsonEncode({
-          'userId': userId,
           'currencyUnit': currenyUnit,
           'money': money,
         }),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       log('response:$response');

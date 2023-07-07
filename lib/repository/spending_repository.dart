@@ -5,8 +5,8 @@ import 'package:expenditure_management/constants/environment.dart';
 import 'package:expenditure_management/models/spending.dart';
 import 'package:expenditure_management/models/summary.dart' as s;
 import 'package:expenditure_management/models/user.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class SpendingRepository {
   String loginURL = 'auth/login';
@@ -31,14 +31,21 @@ class SpendingRepository {
     getSpendingByPeriodURL = url + getSpendingByPeriodURL;
   }
 
+  Future<String?> getAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
+
   Future<void> createSpending(Spending spending) async {
     try {
+      final accessToken = await getAccessToken();
       final response = await http.post(
         Uri.parse(createSpendingURL),
         body: spending.toJson(),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       log('response:$response');
@@ -50,11 +57,13 @@ class SpendingRepository {
 //https://spendingmanagementserver-production.up.railway.app/spends/delete/25
   Future<void> deleteSpending(Spending spending) async {
     try {
+      final accessToken = await getAccessToken();
       final response = await http.delete(
         Uri.parse('$deleteSpendingURL/${spending.id}'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       log('response:$response');
@@ -68,12 +77,14 @@ class SpendingRepository {
   Future<s.Summary?> getSummary(
       int idUser, int month, int year, int walletId) async {
     try {
+      final accessToken = await getAccessToken();
       final response = await http.get(
         Uri.parse(
             '$getSummaryURL/$walletId?month=$month&year=$year&waletId=$walletId'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       return s.Summary.fromMap(jsonDecode(response.body)['data']);
@@ -89,8 +100,7 @@ class SpendingRepository {
       int userID, int day, int month, int year) async {
     List<Spending> spendings = [];
     try {
-      final prefs = await SharedPreferences.getInstance();
-      String? accessToken = prefs.getString("accessToken");
+      final accessToken = await getAccessToken();
       final response = await http.get(
         Uri.parse('$getAllSpendingURL/?day=$day&month=$month&year=$year'),
         headers: {
@@ -114,8 +124,7 @@ class SpendingRepository {
       int userID, String fromDate, String toDate, String type) async {
     List<Spending> spendings = [];
     try {
-      final prefs = await SharedPreferences.getInstance();
-      String? accessToken = prefs.getString("accessToken");
+      final accessToken = await getAccessToken();
       final response = await http.get(
         Uri.parse(
             '$getSpendingByPeriodURL/?fromDate=$fromDate&toDate=$toDate&type=$type'),
@@ -140,8 +149,7 @@ class SpendingRepository {
       int userID, int month, int year) async {
     List<Spending> spendings = [];
     try {
-      final prefs = await SharedPreferences.getInstance();
-      String? accessToken = prefs.getString("accessToken");
+      final accessToken = await getAccessToken();
       final response = await http.get(
         Uri.parse('$getAllSpendingByMonth/?month=$month&year=$year'),
         headers: {
@@ -156,7 +164,6 @@ class SpendingRepository {
       }
       log('response:$response');
     } catch (e) {
-      print("error:$e");
       log('get all spendings: $e');
     }
     return spendings;
