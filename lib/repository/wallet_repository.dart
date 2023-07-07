@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:expenditure_management/constants/environment.dart';
 import 'package:expenditure_management/models/user.dart';
+import 'package:expenditure_management/models/wallet.dart';
 import 'package:http/http.dart' as http;
 
 class WalletRepository {
@@ -60,6 +61,30 @@ class WalletRepository {
     return null;
   }
 
+  //code thêm
+  Future<List<Wallet>> getAllWallet(int userID) async {
+    List<Wallet> wallets = [];
+    try {
+      final response = await http.get(
+        Uri.parse(
+            '$getAllWallet/$userID'), //cho nay hinh nhu thieu dau ? sau userID
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+      );
+      for (var map in jsonDecode(response.body)['data']) {
+        Wallet wallet = Wallet.fromMap(map);
+        wallets.add(wallet);
+      }
+      log('response:$response');
+    } catch (e) {
+      log('get all spendings: $e');
+    }
+    return wallets;
+  }
+
+//
   Future<String?> register(User user) async {
     try {
       final response = await http.post(

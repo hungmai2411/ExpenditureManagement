@@ -7,6 +7,7 @@ import 'package:expenditure_management/constants/function/loading_animation.dart
 import 'package:expenditure_management/constants/function/route_function.dart';
 import 'package:expenditure_management/constants/list.dart';
 import 'package:expenditure_management/models/spending.dart';
+import 'package:expenditure_management/models/wallet.dart';
 import 'package:expenditure_management/page/main/profile/about_page.dart';
 import 'package:expenditure_management/page/main/profile/change_password.dart';
 import 'package:expenditure_management/page/main/profile/currency_exchange_rate.dart';
@@ -15,6 +16,7 @@ import 'package:expenditure_management/page/main/profile/history_page.dart';
 import 'package:expenditure_management/page/main/profile/widget/info_widget.dart';
 import 'package:expenditure_management/page/main/profile/widget/setting_item.dart';
 import 'package:expenditure_management/repository/spending_repository.dart';
+import 'package:expenditure_management/repository/wallet_repository.dart';
 import 'package:expenditure_management/setting/bloc/setting_cubit.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,6 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     });
     super.initState();
+    getWallets();
   }
 
   @override
@@ -119,6 +122,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         color: const Color.fromRGBO(218, 165, 32, 1),
                       ),
                       const SizedBox(height: 20),
+                      // wallet
+                      settingItem(
+                        text: AppLocalizations.of(context)
+                            .translate('wallet_setting'),
+                        action: _showBottomSheetWallet,
+                        icon: Icons.wallet_outlined,
+                        color: Color.fromARGB(255, 45, 13, 172),
+                      ),
+                      const SizedBox(height: 20),
+                      //wallet
+
                       Row(
                         children: [
                           Container(
@@ -372,6 +386,41 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  List<Wallet>? _currentWalletList;
+
+  void getWallets() async {
+    final prefs = await SharedPreferences.getInstance();
+    //int userID = prefs.getInt('userID') ?? -1;
+    int userID = 1;
+
+    _currentWalletList = await WalletRepository().getAllWallet(userID);
+    setState(() {});
+  }
+
+  void _showBottomSheetWallet() {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      ),
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.only(left: 20),
+          width: double.infinity,
+          //height: 323,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _currentWalletList
+                    ?.map((item) => Card(
+                        child: ListTile(title: Text(item.userId.toString()))))
+                    .toList() ??
+                [],
           ),
         );
       },
