@@ -31,7 +31,7 @@ import 'package:expenditure_management/models/user.dart' as myuser;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:file_picker/file_picker.dart';
 import '../../../models/walet.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -488,52 +488,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future exportCSV() async {
     List<Spending> spendingList = [];
-    // spendingList = await SpendingRepository().getAllSpendings(6);
-    // await FirebaseFirestore.instance
-    //     .collection("data")
-    //     .doc(FirebaseAuth.instance.currentUser!.uid)
-    //     .get()
-    //     .then((value) async {
-    //   var data = value.data() as Map<String, dynamic>;
-    //   List<String> listData = [];
-    //   for (var entry in data.entries) {
-    //     listData.addAll(
-    //         (entry.value as List<dynamic>).map((e) => e.toString()).toList());
-    //   }
 
-    //   for (var item in listData) {
-    //     // await FirebaseFirestore.instance
-    //     //     .collection("spending")
-    //     //     .doc(item)
-    //     //     .get()
-    //     //     .then((value) {
-    //     //   //spendingList.add(Spending.fromFirebase(value));
-    //     // });
-    //   }
-    // });
     spendingList = await SpendingRepository().getAllSpendings(6);
-    // await FirebaseFirestore.instance
-    //     .collection("data")
-    //     .doc(FirebaseAuth.instance.currentUser!.uid)
-    //     .get()
-    //     .then((value) async {
-    //   var data = value.data() as Map<String, dynamic>;
-    //   List<String> listData = [];
-    //   for (var entry in data.entries) {
-    //     listData.addAll(
-    //         (entry.value as List<dynamic>).map((e) => e.toString()).toList());
-    //   }
 
-    //   for (var item in listData) {
-    //     // await FirebaseFirestore.instance
-    //     //     .collection("spending")
-    //     //     .doc(item)
-    //     //     .get()
-    //     //     .then((value) {
-    //     //   //spendingList.add(Spending.fromFirebase(value));
-    //     // });
-    //   }
-    // });
     List<List<dynamic>> rows = [];
 
     List<dynamic> row = [
@@ -571,20 +528,11 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     String csv = const ListToCsvConverter().convert(rows);
-    Directory? directory;
-    try {
-      if (Platform.isIOS) {
-        directory = await getApplicationDocumentsDirectory();
-      } else {
-        directory = Directory('/storage/emulated/0/Download');
-        if (!await directory.exists()) {
-          directory = await getExternalStorageDirectory();
-        }
-      }
-    } catch (_) {}
+
+    final directory = await FilePicker.platform.getDirectoryPath();
 
     String path =
-        "${directory!.path}/TNT_${DateFormat("dd_MM_yyyy_HH_mm_ss").format(DateTime.now())}.csv";
+        "${directory}/TNT_${DateFormat("dd_MM_yyyy_HH_mm_ss").format(DateTime.now())}.csv";
     File f = File(path);
     f.writeAsString(csv);
 
