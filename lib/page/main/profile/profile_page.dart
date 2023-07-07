@@ -15,6 +15,8 @@ import 'package:expenditure_management/page/main/profile/history_page.dart';
 import 'package:expenditure_management/page/main/profile/widget/info_widget.dart';
 import 'package:expenditure_management/page/main/profile/widget/setting_item.dart';
 import 'package:expenditure_management/repository/spending_repository.dart';
+import 'package:expenditure_management/repository/spending_repository.dart';
+import 'package:expenditure_management/repository/wallet_repository.dart';
 import 'package:expenditure_management/setting/bloc/setting_cubit.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,6 +32,8 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../models/walet.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
@@ -42,6 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int language = 0;
   bool darkMode = false;
   bool loginMethod = false;
+  final _walletRepository = new WalletRepository();
 
   @override
   void initState() {
@@ -117,6 +122,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         icon: Icons.translate_outlined,
                         color: const Color.fromRGBO(218, 165, 32, 1),
                       ),
+                      //wallet
+                      const SizedBox(height: 20),
+                      settingItem(
+                        text: AppLocalizations.of(context)
+                            .translate('wallet_setting'),
+                        action: _showBottomSheetWallet,
+                        icon: Icons.wallet_outlined,
+                        color: Color.fromARGB(255, 43, 8, 123),
+                      ),
+                      //wallet
                       const SizedBox(height: 20),
                       Row(
                         children: [
@@ -388,6 +403,63 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void _showBottomSheetWallet() {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      ),
+      context: context,
+      builder: (context) {
+        return FutureBuilder<List<Wallet>>(
+          future: _walletRepository.getAllWalletByUser(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Display loading indicator while fetching data
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              // Handle error case
+              return Text('Error: ${snapshot.error}');
+            } else {
+              // Retrieve the wallet list from the snapshot data
+              final List<Wallet> wallets = snapshot.data ?? [];
+
+              // Build the bottom sheet content using the wallet list
+              return Container(
+                padding: const EdgeInsets.only(left: 20),
+                width: double.infinity,
+                height: 180,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var wallet in wallets)
+                      InkWell(
+                        onTap: () {
+                          // Handle onTap logic here for each wallet
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              wallet.name,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+
   Future changeLanguage(int lang) async {
     if (lang != language) {
       if (lang == 0) {
@@ -415,6 +487,29 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future exportCSV() async {
     List<Spending> spendingList = [];
+    // spendingList = await SpendingRepository().getAllSpendings(6);
+    // await FirebaseFirestore.instance
+    //     .collection("data")
+    //     .doc(FirebaseAuth.instance.currentUser!.uid)
+    //     .get()
+    //     .then((value) async {
+    //   var data = value.data() as Map<String, dynamic>;
+    //   List<String> listData = [];
+    //   for (var entry in data.entries) {
+    //     listData.addAll(
+    //         (entry.value as List<dynamic>).map((e) => e.toString()).toList());
+    //   }
+
+    //   for (var item in listData) {
+    //     // await FirebaseFirestore.instance
+    //     //     .collection("spending")
+    //     //     .doc(item)
+    //     //     .get()
+    //     //     .then((value) {
+    //     //   //spendingList.add(Spending.fromFirebase(value));
+    //     // });
+    //   }
+    // });
     spendingList = await SpendingRepository().getAllSpendings(6);
     // await FirebaseFirestore.instance
     //     .collection("data")
@@ -462,6 +557,16 @@ class _ProfilePageState extends State<ProfilePage> {
       row.add(item.location);
       row.add("");
       rows.add(row);
+      row.add(item.moneySpend);
+      if (!mounted) return;
+      row.add(AppLocalizations.of(context).translate(item.type!));
+      row.add(item.note);
+      row.add(DateFormat("dd/MM/yyyy - HH:mm:ss")
+          .format(DateTime.parse(item.timeSpend!)));
+      row.add(item.image);
+      row.add(item.location);
+      row.add("");
+      rows.add(row);
     }
 
     String csv = const ListToCsvConverter().convert(rows);
@@ -483,6 +588,7 @@ class _ProfilePageState extends State<ProfilePage> {
     f.writeAsString(csv);
 
     if (!mounted) return;
+    print(path);
     print(path);
     Fluttertoast.showToast(
       msg:

@@ -7,6 +7,8 @@ import 'package:expenditure_management/page/signup/bloc/singup_state.dart';
 import 'package:expenditure_management/models/user.dart' as myuser;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../models/token.dart';
+
 class SignupBloc extends Bloc<SignupEvent, SignupState> {
   String _status = "";
   final AuthRepository _authRepository;
@@ -14,10 +16,13 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   SignupBloc(this._authRepository) : super(InitState()) {
     on<SignupEmailPasswordEvent>((event, emit) async {
       try {
-        String? response = await _authRepository.register(event.user);
-        if (response != null && response == 'Register success') {
+        Token? response = await _authRepository.register(event.user);
+        if (response != null && response.accessToken != null) {
           SharedPreferences.getInstance().then((value) {
             value.setBool("login", true);
+          });
+          SharedPreferences.getInstance().then((value) {
+            value.setString("accessToken", response.accessToken);
           });
           emit(SignupSuccessState());
         }

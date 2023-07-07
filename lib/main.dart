@@ -12,21 +12,27 @@ import 'package:expenditure_management/setting/localization/app_localizations_se
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:expenditure_management/repository/auth_repository.dart';
 
 bool loginMethod = false;
 int? language;
 bool isDark = false;
-int? id;
+bool? verify = false;
 bool isFirstStart = true;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  final AuthRepository _authRepository = AuthRepository();
   language = prefs.getInt('language');
   isDark = prefs.getBool("isDark") ?? false;
   isFirstStart = prefs.getBool("firstStart") ?? true;
   loginMethod = prefs.getBool("login") ?? false;
-  id = prefs.getInt("userID") ?? -1;
+  String? accessToken = prefs.getString('accessToken');
+  if (accessToken != null) {
+    verify = await _authRepository.verifyAccessToken(accessToken);
+  }
+
   runApp(const MyApp());
 }
 
@@ -86,7 +92,7 @@ class MyApp extends StatelessWidget {
                       primaryColor: const Color.fromRGBO(242, 243, 247, 1),
                     ),
               initialRoute:
-                  id == -1 ? (isFirstStart ? "/" : "/login") : '/main',
+                  verify == false ? (isFirstStart ? "/" : "/login") : '/main',
               routes: {
                 '/': (context) => const OnBoardingPage(),
                 '/login': (context) => const LoginPage(),
