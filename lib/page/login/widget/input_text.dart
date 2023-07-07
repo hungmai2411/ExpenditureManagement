@@ -27,6 +27,7 @@ class InputText extends StatelessWidget {
       style: AppStyles.p,
       keyboardType: inputType,
       textCapitalization: textCapitalization,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (value) {
         if (validator == 0 &&
             (value!.isEmpty ||
