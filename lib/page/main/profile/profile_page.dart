@@ -117,6 +117,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         icon: Icons.translate_outlined,
                         color: const Color.fromRGBO(218, 165, 32, 1),
                       ),
+                      //wallet
+                      const SizedBox(height: 20),
+                      settingItem(
+                        text: AppLocalizations.of(context)
+                            .translate('wallet_setting'),
+                        action: _showBottomSheetWallet,
+                        icon: Icons.wallet_outlined,
+                        color: Color.fromARGB(255, 43, 8, 123),
+                      ),
+                      //wallet
                       const SizedBox(height: 20),
                       Row(
                         children: [
@@ -381,6 +391,74 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showBottomSheetWallet() {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      ),
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.only(left: 20),
+          width: double.infinity,
+          height: 180,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //xử lý map data để hiển thị ra
+              InkWell(
+                onTap: () async {
+                  //set ví được tap thành mặc định
+                },
+                child: Row(
+                  children: [
+                    const Text(
+                      "Tên ví",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              InkWell(
+                onTap: () async {
+                  //set ví được tap thành mặc định
+                },
+                child: Row(
+                  children: [
+                    const Text(
+                      "Tên ví",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () async {
+                  //set ví được tap thành mặc định
+                },
+                child: Row(
+                  children: [
+                    const Text(
+                      "Tên ví",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         );
