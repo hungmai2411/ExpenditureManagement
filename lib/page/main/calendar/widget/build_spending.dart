@@ -50,7 +50,7 @@ class _BuildSpendingState extends State<BuildSpending> {
 
     return ListView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      //physics: const NeverScrollableScrollPhysics(),
       itemCount: spendingList.length,
       itemBuilder: (context, index) {
         return InkWell(

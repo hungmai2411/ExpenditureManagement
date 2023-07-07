@@ -9,6 +9,7 @@ import 'package:expenditure_management/constants/list.dart';
 import 'package:expenditure_management/controls/spending_firebase.dart';
 import 'package:expenditure_management/models/spending.dart';
 import 'package:expenditure_management/page/add_spending/choose_type.dart';
+import 'package:expenditure_management/page/add_spending/choose_wallet_page.dart';
 import 'package:expenditure_management/page/add_spending/widget/add_friend.dart';
 import 'package:expenditure_management/page/add_spending/widget/input_money.dart';
 import 'package:expenditure_management/page/add_spending/widget/input_spending.dart';
@@ -44,6 +45,8 @@ class _AddSpendingPageState extends State<AddSpendingPage> {
   List<String> friends = [];
   List<Color> colors = [];
   int? idType;
+  int? idWallet;
+  String? nameWallet;
 
   @override
   void dispose() {
@@ -147,6 +150,53 @@ class _AddSpendingPageState extends State<AddSpendingPage> {
                                     ? typeName!
                                     : AppLocalizations.of(context)
                                         .translate(listType[type!]["title"]!)),
+                            style: AppStyles.p,
+                          ),
+                          const Spacer(),
+                          const Icon(Icons.arrow_forward_ios_rounded),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              line(),
+              Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 43, 8, 123),
+                      borderRadius: BorderRadius.circular(90),
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child:
+                        const Icon(Icons.wallet_outlined, color: Colors.white),
+                  ),
+                  Expanded(
+                    child: InkWell(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          createRoute(
+                            screen: ChooseWalletPage(
+                              action: (id, name) {
+                                setState(() {
+                                  idWallet = id;
+                                  nameWallet = name;
+                                });
+                              },
+                            ),
+                            begin: const Offset(1, 0),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 10),
+                          Text(
+                            nameWallet ?? 'Wallet',
                             style: AppStyles.p,
                           ),
                           const Spacer(),
@@ -319,8 +369,7 @@ class _AddSpendingPageState extends State<AddSpendingPage> {
             ? coefficient * money
             : ([29, 30, 34, 36, 37, 40].contains(type!) ? 1 : -1) * money,
         typeId: idType,
-        walletId: 5,
-
+        walletId: idWallet,
         // type: type!,
         // typeName: typeName != null ? typeName!.trim() : typeName,
         timeSpend: DateTime(
@@ -339,7 +388,7 @@ class _AddSpendingPageState extends State<AddSpendingPage> {
       await SpendingRepository().createSpending(spending);
       if (!mounted) return;
       Navigator.pop(context);
-      Navigator.pop(context);
+      Navigator.pop(context, spending);
     } else if (type == null) {
       Fluttertoast.showToast(
           msg: AppLocalizations.of(context).translate('please_select_type'));

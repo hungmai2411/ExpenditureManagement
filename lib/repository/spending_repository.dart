@@ -80,8 +80,7 @@ class SpendingRepository {
     try {
       final accessToken = await getAccessToken();
       final response = await http.get(
-        Uri.parse(
-            '$getSummaryURL/$walletId?month=$month&year=$year&waletId=$walletId'),
+        Uri.parse('$getSummaryURL?month=$month&year=$year&waletId=$walletId'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
@@ -98,11 +97,14 @@ class SpendingRepository {
   Future<List<Spending>> getAllSpendings(int userID) async {
     List<Spending> spendings = [];
     try {
+      final accessToken = await getAccessToken();
+
       final response = await http.get(
-        Uri.parse('$getAllSpendingURL/$userID'),
+        Uri.parse('$getAllSpendingURL'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
       for (var map in jsonDecode(response.body)['data']) {
@@ -124,7 +126,7 @@ class SpendingRepository {
     try {
       final accessToken = await getAccessToken();
       final response = await http.get(
-        Uri.parse('$getAllSpendingURL/?day=$day&month=$month&year=$year'),
+        Uri.parse('$getAllSpendingByDateURL/?day=$day&month=$month&year=$year'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
@@ -142,6 +144,7 @@ class SpendingRepository {
     return spendings;
   }
 
+//https://spendingmanagementserver-production.up.railway.app/spends/period?fromDate=03/07/2023&toDate=09/07/2023&type=spending
   Future<List<Spending>> getSpendingsByPeriod(
       int userID, String fromDate, String toDate, String type) async {
     List<Spending> spendings = [];
@@ -149,7 +152,7 @@ class SpendingRepository {
       final accessToken = await getAccessToken();
       final response = await http.get(
         Uri.parse(
-            '$getSpendingByPeriodURL/?fromDate=$fromDate&toDate=$toDate&type=$type'),
+            '$getSpendingByPeriodURL?fromDate=$fromDate&toDate=$toDate&type=$type'),
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',

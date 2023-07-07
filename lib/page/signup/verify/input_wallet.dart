@@ -78,10 +78,7 @@ class _InputWalletPageState extends State<InputWalletPage> {
                 const SizedBox(height: 30),
                 customButton(
                   action: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    int? id = prefs.getInt('userID');
                     await WalletRepository().createFirstWallet(
-                      id!,
                       'VND',
                       int.parse(_moneyController.text
                           .replaceAll(RegExp(r'[^0-9]'), '')),

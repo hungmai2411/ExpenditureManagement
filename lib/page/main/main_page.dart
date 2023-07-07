@@ -40,10 +40,13 @@ class _MainPageState extends State<MainPage> {
         child: PageStorage(bucket: bucket, child: screens[currentTab]),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
+        onPressed: () async {
+          await Navigator.of(context).push(
             createRoute(screen: const AddSpendingPage()),
           );
+          print(1);
+          setState(() => currentTab = 1);
+          print(2);
         },
         child: Icon(
           Icons.add_rounded,

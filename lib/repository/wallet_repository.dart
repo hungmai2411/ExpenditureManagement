@@ -14,12 +14,14 @@ class WalletRepository {
   String registerURL = 'auth/register';
   String creatFirstWalletURL = 'walets/create-first';
   String getWalletsOfUserURL = 'walets/all-of-user';
+  String createWalletURL = 'walets/create';
 
   WalletRepository() {
     loginURL = url + loginURL;
     registerURL = url + registerURL;
     creatFirstWalletURL = url + creatFirstWalletURL;
     getWalletsOfUserURL = url + getWalletsOfUserURL;
+    createWalletURL = url + createWalletURL;
   }
 
   Future<String?> getAccessToken() async {
@@ -27,8 +29,7 @@ class WalletRepository {
     return prefs.getString('accessToken');
   }
 
-  Future<void> createFirstWallet(
-      int userId, String currenyUnit, int money) async {
+  Future<void> createFirstWallet(String currenyUnit, int money) async {
     try {
       final accessToken = await getAccessToken();
       final response = await http.post(
@@ -44,6 +45,28 @@ class WalletRepository {
         },
       );
       log('response:$response');
+    } catch (e) {
+      log('create first wallet: $e');
+    }
+  }
+
+  Future<Wallet?> createNewWallet(String name, int money) async {
+    try {
+      final accessToken = await getAccessToken();
+      final response = await http.post(
+        Uri.parse(createWalletURL),
+        body: jsonEncode({
+          'name': name,
+          "currencyUnit": "VND",
+          'money': money,
+        }),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+      return Wallet.fromJson(jsonDecode(response.body)['data']);
     } catch (e) {
       log('create first wallet: $e');
     }

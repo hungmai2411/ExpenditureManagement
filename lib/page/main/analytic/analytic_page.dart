@@ -72,7 +72,7 @@ class _AnalyticPageState extends State<AnalyticPage>
     getSpending(date);
     super.initState();
   }
- 
+
   Future<void> getSpending(String date) async {
     List<String> period = date.split('-');
     String fromDate = period[0].trim();
@@ -82,7 +82,7 @@ class _AnalyticPageState extends State<AnalyticPage>
       6,
       fromDate,
       endDate,
-      'spending',
+      'spend',
     );
     if (mounted) {
       setState(() {});

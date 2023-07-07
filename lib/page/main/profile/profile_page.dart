@@ -12,6 +12,7 @@ import 'package:expenditure_management/page/main/profile/change_password.dart';
 import 'package:expenditure_management/page/main/profile/currency_exchange_rate.dart';
 import 'package:expenditure_management/page/main/profile/edit_profile_page.dart';
 import 'package:expenditure_management/page/main/profile/history_page.dart';
+import 'package:expenditure_management/page/main/profile/wallet_page.dart';
 import 'package:expenditure_management/page/main/profile/widget/info_widget.dart';
 import 'package:expenditure_management/page/main/profile/widget/setting_item.dart';
 import 'package:expenditure_management/repository/spending_repository.dart';
@@ -19,6 +20,7 @@ import 'package:expenditure_management/repository/spending_repository.dart';
 import 'package:expenditure_management/repository/wallet_repository.dart';
 import 'package:expenditure_management/setting/bloc/setting_cubit.dart';
 import 'package:expenditure_management/setting/localization/app_localizations.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -125,11 +127,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       //wallet
                       const SizedBox(height: 20),
                       settingItem(
-                        text: AppLocalizations.of(context)
-                            .translate('wallet_setting'),
-                        action: _showBottomSheetWallet,
+                        text:
+                            AppLocalizations.of(context).translate('my_wallet'),
+                        action: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const WalletPage(),
+                            ),
+                          );
+                        },
                         icon: Icons.wallet_outlined,
-                        color: Color.fromARGB(255, 43, 8, 123),
+                        color: const Color.fromARGB(255, 43, 8, 123),
                       ),
                       //wallet
                       const SizedBox(height: 20),
@@ -487,52 +495,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future exportCSV() async {
     List<Spending> spendingList = [];
-    // spendingList = await SpendingRepository().getAllSpendings(6);
-    // await FirebaseFirestore.instance
-    //     .collection("data")
-    //     .doc(FirebaseAuth.instance.currentUser!.uid)
-    //     .get()
-    //     .then((value) async {
-    //   var data = value.data() as Map<String, dynamic>;
-    //   List<String> listData = [];
-    //   for (var entry in data.entries) {
-    //     listData.addAll(
-    //         (entry.value as List<dynamic>).map((e) => e.toString()).toList());
-    //   }
 
-    //   for (var item in listData) {
-    //     // await FirebaseFirestore.instance
-    //     //     .collection("spending")
-    //     //     .doc(item)
-    //     //     .get()
-    //     //     .then((value) {
-    //     //   //spendingList.add(Spending.fromFirebase(value));
-    //     // });
-    //   }
-    // });
     spendingList = await SpendingRepository().getAllSpendings(6);
-    // await FirebaseFirestore.instance
-    //     .collection("data")
-    //     .doc(FirebaseAuth.instance.currentUser!.uid)
-    //     .get()
-    //     .then((value) async {
-    //   var data = value.data() as Map<String, dynamic>;
-    //   List<String> listData = [];
-    //   for (var entry in data.entries) {
-    //     listData.addAll(
-    //         (entry.value as List<dynamic>).map((e) => e.toString()).toList());
-    //   }
 
-    //   for (var item in listData) {
-    //     // await FirebaseFirestore.instance
-    //     //     .collection("spending")
-    //     //     .doc(item)
-    //     //     .get()
-    //     //     .then((value) {
-    //     //   //spendingList.add(Spending.fromFirebase(value));
-    //     // });
-    //   }
-    // });
     List<List<dynamic>> rows = [];
 
     List<dynamic> row = [
@@ -570,20 +535,11 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     String csv = const ListToCsvConverter().convert(rows);
-    Directory? directory;
-    try {
-      if (Platform.isIOS) {
-        directory = await getApplicationDocumentsDirectory();
-      } else {
-        directory = Directory('/storage/emulated/0/Download');
-        if (!await directory.exists()) {
-          directory = await getExternalStorageDirectory();
-        }
-      }
-    } catch (_) {}
+
+    final directory = await FilePicker.platform.getDirectoryPath();
 
     String path =
-        "${directory!.path}/TNT_${DateFormat("dd_MM_yyyy_HH_mm_ss").format(DateTime.now())}.csv";
+        "${directory}/TNT_${DateFormat("dd_MM_yyyy_HH_mm_ss").format(DateTime.now())}.csv";
     File f = File(path);
     f.writeAsString(csv);
 
