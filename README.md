@@ -1,4 +1,4 @@
-# Project Đồ án 1
+# Project Phát triển và Bảo trì phần mềm
 <a name="top"><a>
 ## Mục lục
 
@@ -7,6 +7,7 @@
 [Mô tả project](#project)\
 &nbsp;&nbsp;&nbsp; [Công nghệ sử dụng](#use)\
 &nbsp;&nbsp;&nbsp; [Tính năng chính](#main-feature)\
+&nbsp;&nbsp;&nbsp; [Bảo trì](#maintain)\
 &nbsp;&nbsp;&nbsp; [Danh sách các màn hình](#screen)\
 [Demo](#demo)
 
@@ -16,7 +17,10 @@ Lớp: **SE121.N11**
 
 | STT  | Tên                | MSSV      |
 |:-----|:-------------------|:----------|
-|  1   |  Trần Ngọc Tiến | 20520808  |
+|  1   |  Mai Phạm Quốc Hưng | 20521366  |
+|  2   |  Hoàng Văn Phúc     | 20521760  |
+|  3   |  Phạm Quang Viêt    | 20522153  |
+|  4   |  Nguyễn Đức Long    | 20521566  |
 
 [Lên đầu trang](#top)
 ## Đề tài <a name="topic"></a>
@@ -41,6 +45,14 @@ Xây dựng phần mềm quản lý chi tiêu cá nhân trên di dộng
 - Thay đổi số tiền quản lý
 - Tìm kiếm chi tiêu
 - Xuất dữ liệu chi tiêu
+
+### Bảo trì <a name="maintain"></a>
+- Chuyển từ Firebase sang sử dụng Database riêng
+- Chuyển logic từ Firebase sang handle api
+- Refactoring code Front end
+- Thêm một vài ngôn ngữ cho ứng dụng
+- Chỉnh sửa chức năng xuất file CSV
+- Thêm chức năng quản lí nhiều ví
 
 ### Danh sách các màn hình <a name="screen"></a>
 <p float="left">
